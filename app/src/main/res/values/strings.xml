@@ -1,0 +1,12 @@
+<resources>
+    <string name="label_booze_selection">New order</string>
+    <string name="label_checkout">Checkout</string>
+
+    <string name="app_name">Booze</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="title_checkout">Checkout</string>
+    <string name="text_total">Total:</string>
+
+    <string name="button_done">I\'m done!</string>
+</resources>

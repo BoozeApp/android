@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="16dp"
+    android:weightSum="1">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/image_booze_picture"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        app:civ_border_width="0dp" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView android:id="@+id/text_booze_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="16dp"
+            style="@style/TextAppearance.AppCompat.Body1" />
+
+        <TextView android:id="@+id/text_booze_price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="16dp"
+            android:textColor="@color/textPrice"
+            style="@style/TextAppearance.AppCompat.Caption" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal">
+
+        <TextView
+            android:id="@+id/wrap_picker_amount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0"
+            android:textColor="@color/inactive"
+            android:layout_gravity="center_vertical" />
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginLeft="12dp">
+
+            <com.mikepenz.iconics.view.IconicsButton
+                android:id="@+id/wrap_picker_plus"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:background="@drawable/circular_button"
+                android:text="{gmi-plus}"
+                android:textColor="@color/colorAccent"
+                android:gravity="center"
+                android:layout_marginBottom="6dp" />
+
+            <com.mikepenz.iconics.view.IconicsButton
+                android:id="@+id/wrap_picker_minus"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:background="@drawable/circular_button_inactive"
+                android:text="{gmi-minus}"
+                android:textColor="@color/inactive"
+                android:gravity="center" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+</LinearLayout>
