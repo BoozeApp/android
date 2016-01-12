@@ -6,4 +6,5 @@
     <color name="colorAccentDark">#2f8a9b</color>
     <color name="textPrice">#27ae60</color>
     <color name="inactive">#787878</color>
+    <color name="textError">#ae272b</color>
 </resources>
