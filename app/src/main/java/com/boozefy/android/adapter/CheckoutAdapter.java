@@ -9,7 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.boozefy.android.R;
-import com.boozefy.android.model.Booze;
+import com.boozefy.android.model.Beverage;
 import com.squareup.picasso.Picasso;
 
 import butterknife.Bind;
@@ -23,11 +23,11 @@ import butterknife.ButterKnife;
 public class CheckoutAdapter extends BoozeAdapter<CheckoutAdapter.BoozeAmount, CheckoutAdapter.ViewHolder> {
 
     public static class BoozeAmount {
-        public Booze booze;
+        public Beverage beverage;
         public Integer amount;
 
-        public BoozeAmount(Booze booze, Integer amount) {
-            this.booze = booze;
+        public BoozeAmount(Beverage beverage, Integer amount) {
+            this.beverage = beverage;
             this.amount = amount;
         }
     }
@@ -71,15 +71,15 @@ public class CheckoutAdapter extends BoozeAdapter<CheckoutAdapter.BoozeAmount, C
         BoozeAmount boozeAmount = dataList.get(position);
 
         Picasso.with(holder.getContext())
-                .load(boozeAmount.booze.getPicture())
+                .load(boozeAmount.beverage.getPicture())
                 //.placeholder(R.drawable.placeholder)
                 //.error(R.drawable.error)
                 .resize(64, 64)
                 .centerInside()
                 //.tag(context)
                 .into(holder.lPicture);
-        holder.lName.setText(boozeAmount.booze.getName());
-        holder.lPriceUnit.setText("Bs. " + boozeAmount.booze.getPrice() + " / u");
-        holder.lPriceTotal.setText("Bs. " + (boozeAmount.booze.getPrice() * boozeAmount.amount));
+        holder.lName.setText(boozeAmount.beverage.getName());
+        holder.lPriceUnit.setText("Bs. " + boozeAmount.beverage.getPrice() + " / u");
+        holder.lPriceTotal.setText("Bs. " + (boozeAmount.beverage.getPrice() * boozeAmount.amount));
     }
 }

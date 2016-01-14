@@ -11,7 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.boozefy.android.R;
-import com.boozefy.android.model.Booze;
+import com.boozefy.android.model.Beverage;
 import com.squareup.picasso.Picasso;
 
 import java.util.HashMap;
@@ -25,10 +25,10 @@ import butterknife.ButterKnife;
  * Author: Mauricio Giordano (mauricio.c.giordano@gmail.com)
  * Copyright (c) by Booze, 2016 - All rights reserved.
  */
-public class BoozeSelectionAdapter extends BoozeAdapter<Booze, BoozeSelectionAdapter.ViewHolder> {
+public class BoozeSelectionAdapter extends BoozeAdapter<Beverage, BoozeSelectionAdapter.ViewHolder> {
 
     private OnTotalPriceChangedListener onTotalPriceChangedListener = null;
-    private HashMap<Booze, Integer> selectedBoozes = null;
+    private HashMap<Beverage, Integer> selectedBoozes = null;
 
     public interface OnTotalPriceChangedListener {
         void onTotalPriceChanged(double newPrice);
@@ -59,23 +59,23 @@ public class BoozeSelectionAdapter extends BoozeAdapter<Booze, BoozeSelectionAda
             this.context = itemView.getContext();
         }
 
-        public void refreshListeners(final Booze booze) {
-            int amount = selectedBoozes.get(booze) == null ? 0 : selectedBoozes.get(booze);
+        public void refreshListeners(final Beverage beverage) {
+            int amount = selectedBoozes.get(beverage) == null ? 0 : selectedBoozes.get(beverage);
 
-            refreshContent(amount, booze.getMax());
+            refreshContent(amount, beverage.getMax());
 
             lPickerPlus.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    int old = selectedBoozes.get(booze) == null ? 0 : selectedBoozes.get(booze);
+                    int old = selectedBoozes.get(beverage) == null ? 0 : selectedBoozes.get(beverage);
 
-                    if (old == booze.getMax()) return;
+                    if (old == beverage.getMax()) return;
 
-                    selectedBoozes.put(booze, old + 1);
+                    selectedBoozes.put(beverage, old + 1);
                     lPickerAmount.setText(String.valueOf(old + 1));
 
-                    if (old == 0 || old + 1 == booze.getMax()) {
-                        refreshContent(old + 1, booze.getMax());
+                    if (old == 0 || old + 1 == beverage.getMax()) {
+                        refreshContent(old + 1, beverage.getMax());
                     }
 
                     calculateTotalPrice();
@@ -85,18 +85,18 @@ public class BoozeSelectionAdapter extends BoozeAdapter<Booze, BoozeSelectionAda
             lPickerMinus.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    int old = selectedBoozes.get(booze) == null ? 0 : selectedBoozes.get(booze);
+                    int old = selectedBoozes.get(beverage) == null ? 0 : selectedBoozes.get(beverage);
 
                     if (old - 1 == 0 || old == 0) {
-                        selectedBoozes.remove(booze);
+                        selectedBoozes.remove(beverage);
                         lPickerAmount.setText(String.valueOf(0));
-                        refreshContent(0, booze.getMax());
+                        refreshContent(0, beverage.getMax());
                     } else {
-                        if (old == booze.getMax()) {
-                            refreshContent(old - 1, booze.getMax());
+                        if (old == beverage.getMax()) {
+                            refreshContent(old - 1, beverage.getMax());
                         }
 
-                        selectedBoozes.put(booze, old - 1);
+                        selectedBoozes.put(beverage, old - 1);
                         lPickerAmount.setText(String.valueOf(old - 1));
                     }
 
@@ -143,7 +143,7 @@ public class BoozeSelectionAdapter extends BoozeAdapter<Booze, BoozeSelectionAda
     public HashMap<Long, Integer> getSelectedBoozes() {
         HashMap<Long, Integer> result = new HashMap<>();
 
-        for (Map.Entry<Booze, Integer> entry : selectedBoozes.entrySet()) {
+        for (Map.Entry<Beverage, Integer> entry : selectedBoozes.entrySet()) {
             result.put(entry.getKey().getId(), entry.getValue());
         }
 
@@ -155,7 +155,7 @@ public class BoozeSelectionAdapter extends BoozeAdapter<Booze, BoozeSelectionAda
 
         double total = 0.0;
 
-        for (Map.Entry<Booze, Integer> entry : selectedBoozes.entrySet()) {
+        for (Map.Entry<Beverage, Integer> entry : selectedBoozes.entrySet()) {
             total += entry.getValue() * entry.getKey().getPrice();
         }
 
@@ -172,19 +172,19 @@ public class BoozeSelectionAdapter extends BoozeAdapter<Booze, BoozeSelectionAda
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        Booze booze = dataList.get(position);
-        holder.refreshListeners(booze);
+        Beverage beverage = dataList.get(position);
+        holder.refreshListeners(beverage);
 
         Picasso.with(holder.getContext())
-            .load(booze.getPicture())
+            .load(beverage.getPicture())
             //.placeholder(R.drawable.placeholder)
             //.error(R.drawable.error)
             .resize(64, 64)
             .centerInside()
             //.tag(context)
             .into(holder.lPicture);
-        holder.lName.setText(booze.getName());
-        holder.lPrice.setText("Bs. " + booze.getPrice());
+        holder.lName.setText(beverage.getName());
+        holder.lPrice.setText("Bs. " + beverage.getPrice());
     }
 
 }

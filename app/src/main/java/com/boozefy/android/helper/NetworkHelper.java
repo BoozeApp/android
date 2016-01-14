@@ -1,5 +1,6 @@
 package com.boozefy.android.helper;
 
+import retrofit2.GsonConverterFactory;
 import retrofit2.Retrofit;
 
 /**
@@ -13,11 +14,28 @@ public class NetworkHelper {
 
     public static Retrofit getRetrofit() {
         if (retrofit == null) {
+            /*GsonBuilder gsonBuilder = new GsonBuilder();
+            gsonBuilder.registerTypeAdapter(User.class, new UserDeserializer());
+            Gson gson = gsonBuilder.create();*/
+
             retrofit = new Retrofit.Builder()
                 .baseUrl(baseURL)
+                .addConverterFactory(GsonConverterFactory.create())
                 .build();
         }
 
         return retrofit;
     }
+
+    /*static class UserDeserializer implements JsonDeserializer<User> {
+        @Override
+        public User deserialize(JsonElement je, Type type, JsonDeserializationContext jdc)
+                throws JsonParseException {
+
+            JsonElement content = je.getAsJsonObject().get("data");
+
+            return new Gson().fromJson(content, User.class);
+
+        }
+    }*/
 }

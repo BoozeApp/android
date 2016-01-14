@@ -2,15 +2,37 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.boozefy.android">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <meta-data
+            android:name="com.facebook.sdk.ApplicationId"
+            android:value="@string/fb_id" />
+
+        <activity
+            android:name="com.facebook.LoginActivity"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
         <activity
             android:name=".AddressActivity"
             android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity
+            android:name=".BoozeSelectionActivity"
+            android:label="@string/label_booze_selection"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".CheckoutActivity"
+            android:label="@string/label_checkout"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".SignInActivity"
+            android:label="@string/title_activity_sign_in"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -19,12 +41,9 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".BoozeSelectionActivity"
-            android:label="@string/label_booze_selection"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".CheckoutActivity"
-            android:label="@string/label_checkout"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:name=".ThankYouActivity"
+            android:label="@string/title_activity_thank_you"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

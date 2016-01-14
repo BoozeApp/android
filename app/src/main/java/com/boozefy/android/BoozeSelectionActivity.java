@@ -6,19 +6,23 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
 import com.boozefy.android.adapter.BoozeSelectionAdapter;
-import com.boozefy.android.model.Booze;
+import com.boozefy.android.model.Beverage;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class BoozeSelectionActivity extends AppCompatActivity {
 
@@ -32,7 +36,7 @@ public class BoozeSelectionActivity extends AppCompatActivity {
     public Button lButtonDone;
 
     private BoozeSelectionAdapter adapterBooze;
-    private List<Booze> dataList;
+    private List<Beverage> dataList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,27 +48,8 @@ public class BoozeSelectionActivity extends AppCompatActivity {
 
         adapterBooze = new BoozeSelectionAdapter();
 
-        dataList = new ArrayList<>();
-        dataList.add(new Booze(1, "Vodka", 150.00, "http://iacom1-a.akamaihd.net/produtos/01/00/item/5432/2/5432285_1GG.jpg"));
-        dataList.add(new Booze(2, "Rum + Coke", 100.00, "http://liquor.s3.amazonaws.com/wp-content/uploads/2014/12/Myers-Rum.jpg"));
-        dataList.add(new Booze(3, "Shock Top", 30.00, "http://scene7.targetimg1.com/is/image/Target/13437395?wid=480&hei=480"));
-        dataList.add(new Booze(4, "Vodka", 150.00, "http://iacom1-a.akamaihd.net/produtos/01/00/item/5432/2/5432285_1GG.jpg"));
-        dataList.add(new Booze(5, "Rum + Coke", 100.00, "http://liquor.s3.amazonaws.com/wp-content/uploads/2014/12/Myers-Rum.jpg"));
-        dataList.add(new Booze(6, "Shock Top", 30.00, "http://scene7.targetimg1.com/is/image/Target/13437395?wid=480&hei=480"));
-
-        dataList.add(new Booze(11, "Vodka", 150.00, "http://iacom1-a.akamaihd.net/produtos/01/00/item/5432/2/5432285_1GG.jpg"));
-        dataList.add(new Booze(21, "Rum + Coke", 100.00, "http://liquor.s3.amazonaws.com/wp-content/uploads/2014/12/Myers-Rum.jpg"));
-        dataList.add(new Booze(31, "Shock Top", 30.00, "http://scene7.targetimg1.com/is/image/Target/13437395?wid=480&hei=480"));
-        dataList.add(new Booze(41, "Vodka", 150.00, "http://iacom1-a.akamaihd.net/produtos/01/00/item/5432/2/5432285_1GG.jpg"));
-        dataList.add(new Booze(51, "Rum + Coke", 100.00, "http://liquor.s3.amazonaws.com/wp-content/uploads/2014/12/Myers-Rum.jpg"));
-        dataList.add(new Booze(61, "Shock Top", 30.00, "http://scene7.targetimg1.com/is/image/Target/13437395?wid=480&hei=480"));
-
-        dataList.add(new Booze(12, "Vodka", 150.00, "http://iacom1-a.akamaihd.net/produtos/01/00/item/5432/2/5432285_1GG.jpg"));
-        dataList.add(new Booze(22, "Rum + Coke", 100.00, "http://liquor.s3.amazonaws.com/wp-content/uploads/2014/12/Myers-Rum.jpg"));
-        dataList.add(new Booze(32, "Shock Top", 30.00, "http://scene7.targetimg1.com/is/image/Target/13437395?wid=480&hei=480"));
-        dataList.add(new Booze(42, "Vodka", 150.00, "http://iacom1-a.akamaihd.net/produtos/01/00/item/5432/2/5432285_1GG.jpg"));
-        dataList.add(new Booze(52, "Rum + Coke", 100.00, "http://liquor.s3.amazonaws.com/wp-content/uploads/2014/12/Myers-Rum.jpg"));
-        dataList.add(new Booze(62, "Shock Top", 30.00, "http://scene7.targetimg1.com/is/image/Target/13437395?wid=480&hei=480"));
+        dataList = Beverage._.find(this);
+        if (dataList == null) dataList = new ArrayList<>();
 
         adapterBooze.setDataList(dataList);
         adapterBooze.setOnTotalPriceChangedListener(new BoozeSelectionAdapter.OnTotalPriceChangedListener() {
@@ -93,6 +78,25 @@ public class BoozeSelectionActivity extends AppCompatActivity {
         });
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        Call<List<Beverage>> call = Beverage.getService().find();
+        call.enqueue(new Callback<List<Beverage>>() {
+            @Override
+            public void onResponse(Response<List<Beverage>> response) {
+                if (response.body() != null) {
+                    List<Beverage> dataList = response.body();
+
+                    Beverage._.save(dataList, BoozeSelectionActivity.this);
+
+                    adapterBooze.setDataList(dataList);
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                Log.d("USER", "Err " + t.getMessage());
+            }
+        });
     }
 
     @Override

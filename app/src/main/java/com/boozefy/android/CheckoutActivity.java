@@ -2,7 +2,6 @@ package com.boozefy.android;
 
 import android.os.Bundle;
 import android.os.PersistableBundle;
-import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -16,7 +15,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.boozefy.android.adapter.CheckoutAdapter;
-import com.boozefy.android.model.Booze;
+import com.boozefy.android.model.Beverage;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,7 +24,6 @@ import java.util.Map;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import io.realm.Realm;
 
 public class CheckoutActivity extends AppCompatActivity {
 
@@ -46,7 +44,7 @@ public class CheckoutActivity extends AppCompatActivity {
 
     private double total = 0.0;
     private double payAmount = 0.0;
-    private HashMap<Booze, Integer> selectedBoozesModel;
+    private HashMap<Beverage, Integer> selectedBoozesModel;
     private HashMap<Long, Integer> selectedBoozes;
     private CheckoutAdapter adapter;
 
@@ -66,18 +64,16 @@ public class CheckoutActivity extends AppCompatActivity {
             selectedBoozes = (HashMap<Long, Integer>) savedInstanceState.getSerializable("selectedBoozes");
         }
 
-        Realm realm = Realm.getInstance(this);
-
         List<CheckoutAdapter.BoozeAmount> dataList = new ArrayList<>();
 
         for (Map.Entry<Long, Integer> entry : selectedBoozes.entrySet()) {
-            Booze booze = realm.where(Booze.class).equalTo("id", entry.getKey()).findFirst();
+            Beverage beverage = Beverage._.find(entry.getKey(), this);
 
-            selectedBoozesModel.put(booze, entry.getValue());
+            selectedBoozesModel.put(beverage, entry.getValue());
 
-            dataList.add(new CheckoutAdapter.BoozeAmount(booze, entry.getValue()));
+            dataList.add(new CheckoutAdapter.BoozeAmount(beverage, entry.getValue()));
 
-            total += entry.getValue() * booze.getPrice();
+            total += entry.getValue() * beverage.getPrice();
         }
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -136,7 +132,7 @@ public class CheckoutActivity extends AppCompatActivity {
             public void onClick(View view) {
                 if (payAmount < total) return;
 
-                Snackbar.make(view, "Hey! I was just clicked!", Snackbar.LENGTH_LONG).show();
+
             }
         });
     }
