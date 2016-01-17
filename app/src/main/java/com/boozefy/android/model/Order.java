@@ -1,13 +1,20 @@
 package com.boozefy.android.model;
 
-import com.boozefy.android.helper.NetworkHelper;
+import android.content.Context;
 
+import com.boozefy.android.helper.ModelHelper;
+import com.boozefy.android.helper.NetworkHelper;
+import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.dao.ForeignCollection;
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.field.ForeignCollectionField;
+import com.j256.ormlite.table.DatabaseTable;
+
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
-import io.realm.RealmList;
-import io.realm.RealmObject;
-import io.realm.annotations.Ignore;
-import io.realm.annotations.PrimaryKey;
 import retrofit2.Call;
 import retrofit2.http.GET;
 
@@ -16,22 +23,35 @@ import retrofit2.http.GET;
  * Author: Mauricio Giordano (mauricio.c.giordano@gmail.com)
  * Copyright (c) by Booze, 2016 - All rights reserved.
  */
-public class Order extends RealmObject {
+@DatabaseTable
+public class Order {
 
-    @PrimaryKey
+    @DatabaseField(generatedId = false, id = true)
     private long id;
+    @DatabaseField(foreign = true, foreignAutoCreate = true, foreignAutoRefresh = true)
     private User client;
+    @DatabaseField(foreign = true, foreignAutoCreate = true, foreignAutoRefresh = true)
     private User staff;
+    @DatabaseField
     private double amount;
+    @DatabaseField
     private double change;
+    @DatabaseField
     private String status;
+    @DatabaseField
     private String statusReason;
+    @DatabaseField
     private String address;
+    @DatabaseField
     private double latitude;
+    @DatabaseField
     private double longitude;
-    private RealmList<Beverage> beverages;
+    @NetworkHelper.Exclude
+    @ForeignCollectionField(eager = true)
+    private ForeignCollection<Beverage> beveragesRaw;
+    private List<Beverage> beverages;
 
-    @Ignore
+    @NetworkHelper.Exclude
     private static Service service;
 
     public interface Service {
@@ -121,19 +141,41 @@ public class Order extends RealmObject {
         this.longitude = longitude;
     }
 
-    public RealmList<Beverage> getBeverages() {
+    public List<Beverage> getBeverages() {
+        if (beverages != null) return beverages;
+
+        beverages = new ArrayList<>();
+
+        for (Beverage beverage : beveragesRaw) {
+            beverages.add(beverage);
+        }
+
         return beverages;
     }
 
-    public void setBeverages(RealmList<Beverage> beverages) {
+    public void setBeverages(List<Beverage> beverages) {
         this.beverages = beverages;
+    }
+
+    public void setBeverages(List<Beverage> beverages, Context context) {
+        setBeverages(beverages);
+
+        ModelHelper mh = ModelHelper.getModelHelper(context);
+        Dao<Beverage, Integer> beverageDao = mh.getBeverageDao();
+
+        try {
+            this.beveragesRaw = beverageDao.getEmptyForeignCollection("beveragesRaw");
+            this.beveragesRaw.addAll(beverages);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     public static Service getService() {
         if (service == null) {
             service = NetworkHelper.getRetrofit().create(Service.class);
         }
-
+        Collection<String> a = new ArrayList<String>();
         return service;
     }
 

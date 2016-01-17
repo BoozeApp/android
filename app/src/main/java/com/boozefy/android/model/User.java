@@ -2,14 +2,14 @@ package com.boozefy.android.model;
 
 import android.content.Context;
 
+import com.boozefy.android.helper.ModelHelper;
 import com.boozefy.android.helper.NetworkHelper;
-import com.boozefy.android.helper.RealmHelper;
+import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
 
-import io.realm.Realm;
-import io.realm.RealmObject;
-import io.realm.RealmResults;
-import io.realm.annotations.Ignore;
-import io.realm.annotations.PrimaryKey;
+import java.sql.SQLException;
+
 import retrofit2.Call;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
@@ -22,24 +22,33 @@ import retrofit2.http.Query;
  * Author: Mauricio Giordano (mauricio.c.giordano@gmail.com)
  * Copyright (c) by Booze, 2016 - All rights reserved.
  */
-public class User extends RealmObject {
+@DatabaseTable
+public class User {
 
     enum LEVEL {
         client, staff, admin
     }
 
-    @PrimaryKey
+    @DatabaseField(generatedId = false, id = true)
     private long id;
+    @DatabaseField
     private String name;
+    @DatabaseField
     private String email;
+    @DatabaseField
     private String facebookId;
+    @DatabaseField
     private String picture;
-    private String level;
+    @DatabaseField
+    private LEVEL level;
+    @DatabaseField
     private String accessToken;
+    @DatabaseField
     private double latitude;
+    @DatabaseField
     private double longitude;
 
-    @Ignore
+    @NetworkHelper.Exclude
     private static Service service;
 
     public interface Service {
@@ -93,11 +102,11 @@ public class User extends RealmObject {
         this.picture = picture;
     }
 
-    public String getLevel() {
+    public LEVEL getLevel() {
         return level;
     }
 
-    public void setLevel(String level) {
+    public void setLevel(LEVEL level) {
         this.level = level;
     }
 
@@ -135,34 +144,50 @@ public class User extends RealmObject {
 
     public static class _ {
         private static User user = null;
+        private static Dao<User, Integer> userDao = null;
+
+        private static void loadUserDao(Context context) {
+            if (userDao == null) {
+                userDao = ModelHelper.getModelHelper(context).getUserDao();
+            }
+        }
 
         public static User load(Context context) {
             if (user != null) return user;
 
-            Realm realm = RealmHelper.getInstance(context);
-            RealmResults<User> results = realm.allObjects(User.class);
+            loadUserDao(context);
 
-            if (results.size() > 0) {
-                user = results.first();
+            try {
+                user = userDao.queryBuilder().where().ne("accessToken", "").queryForFirst();
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
 
             return user;
         }
 
         public static void save(User user, Context context) {
-            Realm realm = RealmHelper.getInstance(context);
-            realm.beginTransaction();
-            realm.copyToRealmOrUpdate(user);
-            realm.commitTransaction();
+            loadUserDao(context);
+
+            try {
+                userDao.createOrUpdate(user);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
 
             _.user = user;
         }
 
         public static void remove(Context context) {
-            Realm realm = RealmHelper.getInstance(context);
-            realm.beginTransaction();
-            realm.clear(User.class);
-            realm.commitTransaction();
+            loadUserDao(context);
+
+            if (user != null) {
+                try {
+                    userDao.delete(user);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 }

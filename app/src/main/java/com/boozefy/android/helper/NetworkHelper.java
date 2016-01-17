@@ -1,5 +1,15 @@
 package com.boozefy.android.helper;
 
+import com.google.gson.ExclusionStrategy;
+import com.google.gson.FieldAttributes;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
 import retrofit2.GsonConverterFactory;
 import retrofit2.Retrofit;
 
@@ -18,13 +28,33 @@ public class NetworkHelper {
             gsonBuilder.registerTypeAdapter(User.class, new UserDeserializer());
             Gson gson = gsonBuilder.create();*/
 
+            GsonBuilder gsonBuilder = new GsonBuilder();
+            gsonBuilder.setExclusionStrategies(new AnnotationExclusionStrategy());
+            Gson gson = gsonBuilder.create();
+
             retrofit = new Retrofit.Builder()
                 .baseUrl(baseURL)
-                .addConverterFactory(GsonConverterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
         }
 
         return retrofit;
+    }
+
+    @Target(ElementType.FIELD)
+    @Retention(RetentionPolicy.RUNTIME)
+    public @interface Exclude { }
+
+    public static class AnnotationExclusionStrategy implements ExclusionStrategy {
+
+        public boolean shouldSkipClass(Class<?> arg0) {
+            return false;
+        }
+
+        public boolean shouldSkipField(FieldAttributes f) {
+            return f.getAnnotation(Exclude.class) != null;
+        }
+
     }
 
     /*static class UserDeserializer implements JsonDeserializer<User> {

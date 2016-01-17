@@ -2,17 +2,15 @@ package com.boozefy.android.model;
 
 import android.content.Context;
 
+import com.boozefy.android.helper.ModelHelper;
 import com.boozefy.android.helper.NetworkHelper;
-import com.boozefy.android.helper.RealmHelper;
+import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
 
+import java.sql.SQLException;
 import java.util.List;
-import java.util.Set;
 
-import io.realm.Realm;
-import io.realm.RealmObject;
-import io.realm.RealmQuery;
-import io.realm.annotations.Ignore;
-import io.realm.annotations.PrimaryKey;
 import retrofit2.Call;
 import retrofit2.http.GET;
 
@@ -21,15 +19,21 @@ import retrofit2.http.GET;
  * Author: Mauricio Giordano (mauricio.c.giordano@gmail.com)
  * Copyright (c) by Booze, 2016 - All rights reserved.
  */
-public class Beverage extends RealmObject {
+@DatabaseTable
+public class Beverage {
 
-    @PrimaryKey
+    @DatabaseField(generatedId = false, id = true)
     private long id;
+    @DatabaseField
     private String name;
+    @DatabaseField
     private String picture;
+    @DatabaseField
     private double price;
+    @DatabaseField
     private int max;
-    @Ignore
+
+    @NetworkHelper.Exclude
     private static Service service;
 
     public interface Service {
@@ -88,37 +92,62 @@ public class Beverage extends RealmObject {
     }
 
     public static class _ {
+        private static Dao<Beverage, Integer> beverageDao = null;
 
-        public static List<Beverage> findById(Set<Long> ids, Context context) {
-            Realm realm = RealmHelper.getInstance(context);
-            RealmQuery<Beverage> where = realm.where(Beverage.class);
+        private static void loadBeverageDao(Context context) {
+            if (beverageDao == null) {
+                beverageDao = ModelHelper.getModelHelper(context).getBeverageDao();
+            }
+        }
 
-            for (Long id : ids) {
-                where.or().equalTo("id", id);
+        public static List<Beverage> findById(List<Long> ids, Context context) {
+            loadBeverageDao(context);
+
+            List<Beverage> beverages = null;
+
+            try {
+                beverages = beverageDao.queryBuilder().where().in("id", ids).query();
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
 
-            return where.findAll();
+            return beverages;
         }
 
         public static List<Beverage> find(Context context) {
-            Realm realm = RealmHelper.getInstance(context);
-            return realm.allObjects(Beverage.class);
+            loadBeverageDao(context);
+
+            try {
+                return beverageDao.queryForAll();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+            return null;
         }
 
         public static Beverage find(Long id, Context context) {
-            Realm realm = RealmHelper.getInstance(context);
-            return realm.where(Beverage.class).equalTo("id", id).findFirst();
+            loadBeverageDao(context);
+
+            try {
+                return beverageDao.queryBuilder().where().eq("id", id).queryForFirst();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+            return null;
         }
 
         public static void save(List<Beverage> beverages, Context context) {
-            Realm realm = RealmHelper.getInstance(context);
-            realm.beginTransaction();
+            loadBeverageDao(context);
 
             for (Beverage beverage : beverages) {
-                realm.copyToRealmOrUpdate(beverage);
+                try {
+                    beverageDao.createOrUpdate(beverage);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
             }
-
-            realm.commitTransaction();
         }
 
     }

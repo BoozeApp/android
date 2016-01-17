@@ -1,0 +1,102 @@
+#
+# generated on 2014/05/10 08:54:28
+#
+# --table-start--
+dataClass=com.boozefy.android.model.User
+tableName=user
+# --table-fields-start--
+# --field-start--
+fieldName=id
+id=true
+# --field-end--
+# --field-start--
+fieldName=name
+# --field-end--
+# --field-start--
+fieldName=email
+# --field-end--
+# --field-start--
+fieldName=facebookId
+# --field-end--
+# --field-start--
+fieldName=picture
+# --field-end--
+# --field-start--
+fieldName=level
+# --field-end--
+# --field-start--
+fieldName=accessToken
+# --field-end--
+# --field-start--
+fieldName=latitude
+# --field-end--
+# --field-start--
+fieldName=longitude
+# --field-end--
+# --table-fields-end--
+# --table-end--
+#################################
+# --table-start--
+dataClass=com.boozefy.android.model.Beverage
+tableName=beverage
+# --table-fields-start--
+# --field-start
+fieldName=id
+id=true
+# --field-end
+# --field-start
+fieldName=name
+# --field-end
+# --field-start
+fieldName=picture
+# --field-end
+# --field-start
+fieldName=price
+# --field-end
+# --field-start
+fieldName=max
+# --field-end
+# --table-fields-end--
+# --table-end--
+#################################
+# --table-start--
+dataClass=com.boozefy.android.model.Order
+tableName=order
+# --table-fields-start--
+# --field-start--
+fieldName=id
+id=true
+# --field-end
+# --field-start--
+fieldName=client
+# --field-end
+# --field-start--
+fieldName=staff
+# --field-end
+# --field-start--
+fieldName=amount
+# --field-end
+# --field-start--
+fieldName=change
+# --field-end
+# --field-start--
+fieldName=status
+# --field-end
+# --field-start--
+fieldName=statusReason
+# --field-end
+# --field-start--
+fieldName=address
+# --field-end
+# --field-start--
+fieldName=latitude
+# --field-end
+# --field-start--
+fieldName=longitude
+# --field-end
+# --field-start--
+fieldName=beveragesRaw
+# --field-end
+# --table-fields-end--
+# --table-end--
+#################################
