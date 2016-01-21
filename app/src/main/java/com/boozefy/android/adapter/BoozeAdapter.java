@@ -25,4 +25,12 @@ public abstract class BoozeAdapter<D, VH extends RecyclerView.ViewHolder> extend
         return dataList.size();
     }
 
+    public D getItem(int pos) {
+        if (dataList.size() >= pos) return null;
+        return dataList.get(pos);
+    }
+
+    public interface OnItemClickListener {
+        void onItemClick(int pos);
+    }
 }

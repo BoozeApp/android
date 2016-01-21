@@ -13,7 +13,9 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.boozefy.android.adapter.BoozeSelectionAdapter;
+import com.boozefy.android.helper.GeocoderHelper;
 import com.boozefy.android.model.Beverage;
+import com.google.gson.JsonParser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,12 +39,26 @@ public class BoozeSelectionActivity extends AppCompatActivity {
 
     private BoozeSelectionAdapter adapterBooze;
     private List<Beverage> dataList;
+    private GeocoderHelper.Location location;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_booze_selection);
         ButterKnife.bind(this);
+
+        if (savedInstanceState == null) {
+            location = GeocoderHelper.Location.fromJson(
+                    new JsonParser().parse(getIntent().getStringExtra("location")));
+        } else {
+            location = GeocoderHelper.Location.fromJson(
+                    new JsonParser().parse(savedInstanceState.getString("location")));
+        }
+
+        if (location == null) {
+            finish();
+            return;
+        }
 
         setSupportActionBar(lToolbar);
 
@@ -73,6 +89,7 @@ public class BoozeSelectionActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(BoozeSelectionActivity.this, CheckoutActivity.class);
                 intent.putExtra("selectedBoozes", adapterBooze.getSelectedBoozes());
+                intent.putExtra("location", location.toString());
                 startActivity(intent);
             }
         });
@@ -97,6 +114,12 @@ public class BoozeSelectionActivity extends AppCompatActivity {
                 Log.d("USER", "Err " + t.getMessage());
             }
         });
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString("location", location.toString());
     }
 
     @Override

@@ -1,4 +1,8 @@
 <resources>
+    <array name="spinner_city">
+        <item>La Paz</item>
+    </array>
+
     <string name="fb_id">961863003850867</string>
 
     <string name="label_booze_selection">New order</string>
@@ -10,7 +14,21 @@
     <string name="title_checkout">Checkout</string>
     <string name="text_total">Total:</string>
 
+    <string name="title_thank_you">Thank you!</string>
+    <string name="text_thank_you">Your order is being processed.\nYou will be notified as soon as we leave for deliver.</string>
+
     <string name="button_done">I\'m done!</string>
+    <string name="button_deliver_here">Deliver here</string>
+    <string name="button_cancel">Cancel</string>
+
+    <string name="dialog_title_your_address">Your address</string>
+    <string name="dialog_loading_location">Loading location, please wait…</string>
+
     <string name="title_activity_sign_in">SignInActivity</string>
     <string name="title_activity_thank_you">ThankYouActivity</string>
+
+    <string name="snackbar_could_not_find_location">Could not find location</string>
+    <string name="snackbar_could_not_detect_gps">Could not detect GPS location</string>
+    <string name="title_activity_orders">OrdersActivity</string>
+    <string name="title_activity_order">OrderActivity</string>
 </resources>

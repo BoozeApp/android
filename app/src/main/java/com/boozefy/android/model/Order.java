@@ -5,9 +5,7 @@ import android.content.Context;
 import com.boozefy.android.helper.ModelHelper;
 import com.boozefy.android.helper.NetworkHelper;
 import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
-import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import java.sql.SQLException;
@@ -16,7 +14,13 @@ import java.util.Collection;
 import java.util.List;
 
 import retrofit2.Call;
+import retrofit2.http.Field;
+import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
+import retrofit2.http.POST;
+import retrofit2.http.PUT;
+import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 /**
  * Created by Mauricio Giordano on 1/13/16.
@@ -25,6 +29,10 @@ import retrofit2.http.GET;
  */
 @DatabaseTable
 public class Order {
+
+    public enum STATUS {
+        draft, placed, in_transit, fulfilled, rejected
+    }
 
     @DatabaseField(generatedId = false, id = true)
     private long id;
@@ -37,7 +45,7 @@ public class Order {
     @DatabaseField
     private double change;
     @DatabaseField
-    private String status;
+    private STATUS status;
     @DatabaseField
     private String statusReason;
     @DatabaseField
@@ -46,9 +54,9 @@ public class Order {
     private double latitude;
     @DatabaseField
     private double longitude;
-    @NetworkHelper.Exclude
-    @ForeignCollectionField(eager = true)
-    private ForeignCollection<Beverage> beveragesRaw;
+    @DatabaseField
+    private String createdAt;
+
     private List<Beverage> beverages;
 
     @NetworkHelper.Exclude
@@ -56,7 +64,51 @@ public class Order {
 
     public interface Service {
         @GET("orders")
-        Call<List<Order>> find();
+        Call<List<Order>> find(@Query("access_token") String accessToken);
+
+        @GET("orders/{orderId}")
+        Call<Order> get(@Path("orderId") long orderId,
+                        @Query("access_token") String accessToken);
+
+        @FormUrlEncoded
+        @POST("orders")
+        Call<Order> create(@Query("access_token") String accessToken,
+                           @Field("address") String address,
+                           @Field("change") double change,
+                           @Field("latitude") double latitude,
+                           @Field("longitude") double longitude);
+
+        @FormUrlEncoded
+        @POST("orders/{orderId}/beverages/{beverageId}")
+        Call<Order> addBeverage(@Path("orderId") long orderId,
+                                @Path("beverageId") long beverageId,
+                                @Query("access_token") String accessToken,
+                                @Field("amount") int amount);
+
+        @PUT("orders/{orderId}/place")
+        Call<Order> place(@Path("orderId") long orderId,
+                          @Query("access_token") String accessToken);
+
+        @PUT("orders/{orderId}/transit")
+        Call<Order> transit(@Path("orderId") long orderId,
+                            @Query("access_token") String accessToken);
+
+        @PUT("orders/{orderId}/fulfill")
+        Call<Order> fulfill(@Path("orderId") long orderId,
+                            @Query("access_token") String accessToken);
+
+        @PUT("orders/{orderId}/reject")
+        Call<Order> reject(@Path("orderId") long orderId,
+                          @Query("access_token") String accessToken);
+
+        @GET("orders/placed")
+        Call<List<Order>> placed(@Query("access_token") String accessToken);
+
+        @GET("orders/in_transit")
+        Call<List<Order>> inTransit(@Query("access_token") String accessToken);
+
+        @GET("orders/fulfilled")
+        Call<List<Order>> fulfilled(@Query("access_token") String accessToken);
     }
 
     public Order() { }
@@ -101,11 +153,11 @@ public class Order {
         this.change = change;
     }
 
-    public String getStatus() {
+    public STATUS getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(STATUS status) {
         this.status = status;
     }
 
@@ -141,34 +193,20 @@ public class Order {
         this.longitude = longitude;
     }
 
+    public String getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(String createdAt) {
+        this.createdAt = createdAt;
+    }
+
     public List<Beverage> getBeverages() {
-        if (beverages != null) return beverages;
-
-        beverages = new ArrayList<>();
-
-        for (Beverage beverage : beveragesRaw) {
-            beverages.add(beverage);
-        }
-
         return beverages;
     }
 
     public void setBeverages(List<Beverage> beverages) {
         this.beverages = beverages;
-    }
-
-    public void setBeverages(List<Beverage> beverages, Context context) {
-        setBeverages(beverages);
-
-        ModelHelper mh = ModelHelper.getModelHelper(context);
-        Dao<Beverage, Integer> beverageDao = mh.getBeverageDao();
-
-        try {
-            this.beveragesRaw = beverageDao.getEmptyForeignCollection("beveragesRaw");
-            this.beveragesRaw.addAll(beverages);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
     }
 
     public static Service getService() {
@@ -180,7 +218,37 @@ public class Order {
     }
 
     public static class _ {
+        private static Dao<Order, Integer> orderDao = null;
 
+        private static void loadOrderDao(Context context) {
+            if (orderDao == null) {
+                orderDao = ModelHelper.getModelHelper(context).getOrderDao();
+            }
+        }
+
+        public static void save(Order order, Context context) {
+            loadOrderDao(context);
+
+            try {
+                orderDao.createOrUpdate(order);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+        public static Order get(long id, Context context) {
+            loadOrderDao(context);
+
+            Order order = null;
+
+            try {
+                order = orderDao.queryBuilder().where().eq("id", id).queryForFirst();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+            return order;
+        }
     }
 }
 

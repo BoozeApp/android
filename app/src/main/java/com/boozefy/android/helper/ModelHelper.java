@@ -26,7 +26,7 @@ import java.sql.SQLException;
  */
 public class ModelHelper extends OrmLiteSqliteOpenHelper
 {
-    public static final int DATABASE_VERSION = 1;
+    public static final int DATABASE_VERSION = 2;
 
     private Dao<User, Integer> userDao = null;
     private Dao<Beverage, Integer> beverageDao = null;

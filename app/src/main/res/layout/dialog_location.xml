@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Street" />
+
+        <EditText android:id="@+id/edit_street"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textAutoComplete"
+            android:minWidth="100dp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="1"
+        android:layout_marginTop="16dp">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight=".4"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Number" />
+
+            <EditText android:id="@+id/edit_number"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight=".6"
+            android:orientation="vertical"
+            android:layout_marginLeft="8dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Zip code" />
+
+            <EditText android:id="@+id/edit_zip_code"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPostalAddress" />
+
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginTop="16dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="City" />
+
+        <Spinner android:id="@+id/spinner_city"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:entries="@array/spinner_city" />
+
+    </LinearLayout>
+</LinearLayout>

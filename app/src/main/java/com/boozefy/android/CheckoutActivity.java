@@ -1,5 +1,7 @@
 package com.boozefy.android;
 
+import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.support.v4.content.ContextCompat;
@@ -9,13 +11,18 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import com.boozefy.android.adapter.CheckoutAdapter;
+import com.boozefy.android.helper.GeocoderHelper;
 import com.boozefy.android.model.Beverage;
+import com.boozefy.android.model.Order;
+import com.boozefy.android.model.User;
+import com.google.gson.JsonParser;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,6 +31,9 @@ import java.util.Map;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class CheckoutActivity extends AppCompatActivity {
 
@@ -48,6 +58,10 @@ public class CheckoutActivity extends AppCompatActivity {
     private HashMap<Long, Integer> selectedBoozes;
     private CheckoutAdapter adapter;
 
+    private User user;
+    private GeocoderHelper.Location location;
+    private ProgressDialog progressOrder;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,6 +70,20 @@ public class CheckoutActivity extends AppCompatActivity {
         
         setSupportActionBar(lToolbar);
 
+        if (savedInstanceState == null) {
+            location = GeocoderHelper.Location.fromJson(
+                    new JsonParser().parse(getIntent().getStringExtra("location")));
+        } else {
+            location = GeocoderHelper.Location.fromJson(
+                    new JsonParser().parse(savedInstanceState.getString("location")));
+        }
+
+        if (location == null) {
+            finish();
+            return;
+        }
+
+        user = User._.load(this);
         selectedBoozesModel = new HashMap<>();
 
         if (savedInstanceState == null) {
@@ -132,7 +160,102 @@ public class CheckoutActivity extends AppCompatActivity {
             public void onClick(View view) {
                 if (payAmount < total) return;
 
+                progressOrder = new ProgressDialog(CheckoutActivity.this);
+                progressOrder.setMessage("Creating order, please wait...");
+                progressOrder.setIndeterminate(true);
+                progressOrder.show();
 
+                createOrder();
+            }
+        });
+    }
+
+    private void createOrder() {
+        Call<Order> createCall = Order.getService().create(
+                user.getAccessToken(),
+                location.addressLine(),
+                payAmount - total,
+                location.latitude,
+                location.longitude
+        );
+
+        createCall.enqueue(new Callback<Order>() {
+            @Override
+            public void onResponse(Response<Order> response) {
+                if (response.body() != null) {
+                    addBeverages(response.body());
+                } else {
+                    Log.d("ERROR", response.message());
+                    progressOrder.dismiss();
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                Log.d("FAIL", t.getMessage());
+                progressOrder.dismiss();
+            }
+        });
+    }
+
+    int beverageCounter = 0;
+
+    private void addBeverages(final Order order) {
+        for (Map.Entry<Beverage, Integer> entry : selectedBoozesModel.entrySet()) {
+            Call<Order> addCall = Order.getService().addBeverage(
+                order.getId(),
+                entry.getKey().getId(),
+                user.getAccessToken(),
+                entry.getValue()
+            );
+
+            addCall.enqueue(new Callback<Order>() {
+                @Override
+                public void onResponse(Response<Order> response) {
+                    if (response.body() != null) {
+                        beverageCounter++;
+
+                        if (beverageCounter == selectedBoozesModel.size()) {
+                            placeOrder(order);
+                        }
+                    } else {
+                        Log.d("ERROR", response.message());
+                        progressOrder.dismiss();
+                    }
+                }
+
+                @Override
+                public void onFailure(Throwable t) {
+                    Log.d("FAIL", t.getMessage());
+                    progressOrder.dismiss();
+                }
+            });
+        }
+    }
+
+    private void placeOrder(Order order) {
+        Call<Order> placeCall = Order.getService().place(
+            order.getId(),
+            user.getAccessToken()
+        );
+
+        placeCall.enqueue(new Callback<Order>() {
+            @Override
+            public void onResponse(Response<Order> response) {
+                if (response.body() != null) {
+                    Intent intent = new Intent(CheckoutActivity.this, ThankYouActivity.class);
+                    startActivity(intent);
+                    finish();
+                } else {
+                    Log.d("ERROR", response.message());
+                    progressOrder.dismiss();
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                Log.d("FAIL", t.getMessage());
+                progressOrder.dismiss();
             }
         });
     }
@@ -142,6 +265,7 @@ public class CheckoutActivity extends AppCompatActivity {
         super.onSaveInstanceState(outState, outPersistentState);
 
         outState.putSerializable("selectedBoozes", selectedBoozes);
+        outState.putString("location", location.toString());
     }
 
     @Override

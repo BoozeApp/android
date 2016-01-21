@@ -25,7 +25,7 @@ import retrofit2.http.Query;
 @DatabaseTable
 public class User {
 
-    enum LEVEL {
+    public enum LEVEL {
         client, staff, admin
     }
 

@@ -2,6 +2,8 @@ package com.boozefy.android;
 
 import android.Manifest;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
@@ -9,10 +11,11 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -20,6 +23,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Spinner;
+
+import com.boozefy.android.helper.GeocoderHelper;
 
 import java.io.IOException;
 import java.util.List;
@@ -36,10 +43,11 @@ public class AddressActivity extends AppCompatActivity {
     @Bind(R.id.toolbar)
     public Toolbar lToolbar;
 
-    @Bind(R.id.fab)
-    public FloatingActionButton lFab;
+    @Bind(R.id.button_orders)
+    public Button lButtonOrders;
 
     public static final int REQUEST_PERMISSION_FINE_LOCATION = 10;
+    private boolean foundLocation = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,14 +56,6 @@ public class AddressActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         setSupportActionBar(lToolbar);
-
-        lFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
 
         lCurrentLocation.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -70,16 +70,22 @@ public class AddressActivity extends AppCompatActivity {
                 } else {
                     gatherUserLocation();
                 }
-
-                /* Intent intent = new Intent(AddressActivity.this, BoozeSelectionActivity.class);
-                startActivity(intent); */
             }
         });
+
+        lButtonOrders.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(AddressActivity.this, OrdersActivity.class);
+                startActivity(intent);
+            }
+        });
+
     }
 
     private void gatherUserLocation() {
         final ProgressDialog progressDialog = new ProgressDialog(this);
-        progressDialog.setMessage("Loading location...");
+        progressDialog.setMessage(getString(R.string.dialog_loading_location));
         progressDialog.show();
 
         LocationManager mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
@@ -87,35 +93,28 @@ public class AddressActivity extends AppCompatActivity {
             private boolean lock = false;
             @Override
             public void onLocationChanged(Location location) {
-                if (lock) return;
-                progressDialog.dismiss();
+                if (lock || foundLocation) return;
                 lock = true;
 
-                Log.d("LOCATION", "LATITUDE  " + location.getLatitude());
-                Log.d("LOCATION", "LONGITUDE " + location.getLongitude());
-
-                String cityName = null;
                 Geocoder gcd = new Geocoder(getBaseContext(), Locale.getDefault());
-                List<Address> addresses = null;
+                List<Address> addresses;
+
                 try {
                     addresses = gcd.getFromLocation(location.getLatitude(),
                             location.getLongitude(), 1);
 
-                    String address = addresses.get(0).getAddressLine(0); // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
-                    String city = addresses.get(0).getLocality();
-                    String state = addresses.get(0).getAdminArea();
-                    String country = addresses.get(0).getCountryName();
-                    String postalCode = addresses.get(0).getPostalCode();
-                    String knownName = addresses.get(0).getFeatureName();
+                    String address = addresses.get(0).getAddressLine(0);
 
-                    Log.d("LOCATION", "ADDRESS    " + address);
-                    Log.d("LOCATION", "CITY       " + city);
-                    Log.d("LOCATION", "STATE      " + state);
-                    Log.d("LOCATION", "COUNTRY    " + country);
-                    Log.d("LOCATION", "POSTALCODE " + postalCode);
-                    Log.d("LOCATION", "KNOWNNAME  " + knownName);
+                    GeocoderHelper.gatherFromAddress(address, new GeocoderHelper.OnLocationGathered() {
+                        @Override
+                        public void onGathered(GeocoderHelper.Location location) {
+                            progressDialog.dismiss();
+                            displayDialog(location);
+                        }
+                    });
 
                 } catch (IOException e) {
+                    progressDialog.dismiss();
                     e.printStackTrace();
                 }
 
@@ -137,66 +136,86 @@ public class AddressActivity extends AppCompatActivity {
             }
         });
 
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (!foundLocation) {
+                    progressDialog.dismiss();
+                    foundLocation = true;
 
-        /*long GPSLocationTime = 0;
-        if (null != locationGPS) { GPSLocationTime = locationGPS.getTime(); }
-
-        long NetLocationTime = 0;
-
-        if (null != locationNet) {
-            NetLocationTime = locationNet.getTime();
-        }
-
-        if ( 0 < GPSLocationTime - NetLocationTime ) {
-            return locationGPS;
-        }
-        else {
-            return locationNet;
-        }*/
-
-
-        mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10,
-            new LocationListener() {
-                @Override
-                public void onLocationChanged(Location location) {
-
-                    Log.d("LOCATION", "LATITUDE  " + location.getLatitude());
-                    Log.d("LOCATION", "LONGITUDE " + location.getLongitude());
-
-                     /*------- To get city name from coordinates -------- */
-                    String cityName = null;
-                    Geocoder gcd = new Geocoder(getBaseContext(), Locale.getDefault());
-                    List<Address> addresses;
-                    try {
-                        addresses = gcd.getFromLocation(location.getLatitude(),
-                                location.getLongitude(), 1);
-                        if (addresses.size() > 0) {
-                            System.out.println(addresses.get(0).getLocality());
-                            cityName = addresses.get(0).getLocality();
-                        }
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-
-                    Log.d("LOCATION", "CITY " + cityName);
-                }
-
-                @Override
-                public void onStatusChanged(String s, int i, Bundle bundle) {
-
-                }
-
-                @Override
-                public void onProviderEnabled(String s) {
-
-                }
-
-                @Override
-                public void onProviderDisabled(String s) {
-
+                    Snackbar.make(lToolbar, R.string.snackbar_could_not_detect_gps,
+                                                                Snackbar.LENGTH_LONG).show();
+                    displayDialog(null);
                 }
             }
-        );
+        }, 10000);
+    }
+
+    private void displayDialog(GeocoderHelper.Location location) {
+        View layout = getLayoutInflater().inflate(R.layout.dialog_location, null, false);
+
+        final EditText lEditStreet = (EditText) layout.findViewById(R.id.edit_street);
+        final EditText lEditNumber = (EditText) layout.findViewById(R.id.edit_number);
+        final EditText lEditZipCode = (EditText) layout.findViewById(R.id.edit_zip_code);
+        final Spinner lSpinnerCity = (Spinner) layout.findViewById(R.id.spinner_city);
+
+        if (location != null) {
+            lEditStreet.setText(location.street);
+            lEditNumber.setText(location.number);
+            lEditZipCode.setText(location.zipCode);
+        }
+
+        lSpinnerCity.setEnabled(false);
+
+        AlertDialog dialog = new AlertDialog.Builder(this)
+            .setTitle(R.string.dialog_title_your_address)
+            .setView(layout)
+            .setPositiveButton(R.string.button_deliver_here, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    final ProgressDialog progressDialog = new ProgressDialog(AddressActivity.this);
+                    progressDialog.setMessage(getString(R.string.dialog_loading_location));
+                    progressDialog.show();
+
+                    String addressLine = lEditStreet.getText().toString() + ", " +
+                                         lEditNumber.getText().toString() + " - " +
+                                         lSpinnerCity.getSelectedItem().toString() + ", " +
+                                         lEditZipCode.getText().toString() + ", Bolivia";
+
+                    GeocoderHelper.gatherFromAddress(addressLine, new GeocoderHelper.OnLocationGathered() {
+                        @Override
+                        public void onGathered(GeocoderHelper.Location location) {
+                            progressDialog.dismiss();
+
+                            if (location == null) {
+                                Snackbar.make(lToolbar, R.string.snackbar_could_not_detect_gps,
+                                        Snackbar.LENGTH_LONG).show();
+                                return;
+                            }
+
+                            if (location.street == null) {
+                                location.street = lEditStreet.getText().toString();
+                            }
+
+                            if (location.number == null) {
+                                location.number = lEditNumber.getText().toString();
+                            }
+
+                            if (location.zipCode == null) {
+                                location.zipCode = lEditZipCode.getText().toString();
+                            }
+
+                            Intent intent = new Intent(AddressActivity.this, BoozeSelectionActivity.class);
+                            intent.putExtra("location", location.toString());
+                            startActivity(intent);
+                        }
+                    });
+                }
+            })
+            .setNegativeButton(R.string.button_cancel, null)
+            .create();
+
+        dialog.show();
     }
 
     @Override
@@ -231,7 +250,7 @@ public class AddressActivity extends AppCompatActivity {
 
                 gatherUserLocation();
             } else {
-                Snackbar.make(lFab, "You need to accept", Snackbar.LENGTH_LONG).show();
+                Snackbar.make(lToolbar, "You need to accept", Snackbar.LENGTH_LONG).show();
             }
         }
     }

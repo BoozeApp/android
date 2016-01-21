@@ -95,7 +95,7 @@ fieldName=latitude
 fieldName=longitude
 # --field-end
 # --field-start--
-fieldName=beveragesRaw
+fieldName=createdAt
 # --field-end
 # --table-fields-end--
 # --table-end--
