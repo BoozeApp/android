@@ -5,6 +5,8 @@
 
     <string name="fb_id">961863003850867</string>
 
+    <string name="text_price">Bs. %.2f</string>
+
     <string name="label_booze_selection">New order</string>
     <string name="label_checkout">Checkout</string>
 
@@ -20,15 +22,24 @@
     <string name="button_done">I\'m done!</string>
     <string name="button_deliver_here">Deliver here</string>
     <string name="button_cancel">Cancel</string>
+    <string name="button_open_navigation">Open navigation</string>
+    <string name="button_yes">Yes</string>
+    <string name="button_no">No</string>
 
     <string name="dialog_title_your_address">Your address</string>
     <string name="dialog_loading_location">Loading location, please wait…</string>
+    <string name="dialog_title_deliver_confirmation">Deliver order</string>
+    <string name="dialog_message_deliver_confirmation">Are you sure you want to deliver this order?\nThe client will receive a message right away.</string>
+    <string name="dialog_loading_generic">Please wait…</string>
 
-    <string name="title_activity_sign_in">SignInActivity</string>
-    <string name="title_activity_thank_you">ThankYouActivity</string>
+    <string name="push_title_in_transit">Order update</string>
+    <string name="push_message_in_transit">Your order went out for delivery!</string>
 
     <string name="snackbar_could_not_find_location">Could not find location</string>
     <string name="snackbar_could_not_detect_gps">Could not detect GPS location</string>
-    <string name="title_activity_orders">OrdersActivity</string>
-    <string name="title_activity_order">OrderActivity</string>
+    
+    <string name="title_activity_sign_in">BoozeApp</string>
+    <string name="title_activity_thank_you">Thank You</string>
+    <string name="title_activity_orders">Orders</string>
+    <string name="title_activity_order">Order</string>
 </resources>

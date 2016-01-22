@@ -6,6 +6,16 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+
+    <permission
+        android:protectionLevel="signature"
+        android:name="com.boozefy.android.permission.C2D_MESSAGE" />
+
+    <uses-permission android:name="com.boozefy.android.permission.C2D_MESSAGE" />
 
     <application
         android:allowBackup="true"
@@ -16,6 +26,22 @@
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/fb_id" />
+
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+
+        <receiver
+            android:name="com.boozefy.android.gcm.GcmBroadcastReceiver"
+            android:permission="com.google.android.c2dm.permission.SEND" >
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+
+                <category android:name="com.estudiotrilha.sxx" />
+            </intent-filter>
+        </receiver>
+
+        <service android:name="com.boozefy.android.gcm.GcmIntentService" />
 
         <activity
             android:name="com.facebook.LoginActivity"
@@ -55,6 +81,7 @@
             android:name=".OrderActivity"
             android:label="@string/title_activity_order"
             android:theme="@style/AppTheme.NoActionBar" />
+
     </application>
 
 </manifest>

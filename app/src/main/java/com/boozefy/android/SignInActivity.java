@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
+import com.boozefy.android.helper.GcmHelper;
 import com.boozefy.android.model.User;
 import com.sromku.simple.fb.Permission;
 import com.sromku.simple.fb.SimpleFacebook;
@@ -34,6 +35,8 @@ public class SignInActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
         ButterKnife.bind(this);
+
+        GcmHelper.getInstance().make(this);
 
         setSupportActionBar(lToolbar);
 
@@ -70,8 +73,13 @@ public class SignInActivity extends AppCompatActivity {
                     @Override
                     public void onLogin() {
                         String accessToken = mSimpleFacebook.getSession().getAccessToken();
+                        Log.d("REG ID" , "" + GcmHelper.getInstance().getRegistrationId(SignInActivity.this));
+                        Call<User> call = User.getService().auth(
+                            accessToken,
+                            "android",
+                            GcmHelper.getInstance().getRegistrationId(SignInActivity.this)
+                        );
 
-                        Call<User> call = User.getService().auth(accessToken);
                         call.enqueue(new Callback<User>() {
                             @Override
                             public void onResponse(Response<User> response) {
@@ -82,6 +90,8 @@ public class SignInActivity extends AppCompatActivity {
                                     Intent intent = new Intent(SignInActivity.this, AddressActivity.class);
                                     startActivity(intent);
                                     finish();
+                                } else {
+                                    Log.d("ERR", response.message());
                                 }
                             }
 

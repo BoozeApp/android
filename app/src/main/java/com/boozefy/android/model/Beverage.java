@@ -33,6 +33,8 @@ public class Beverage {
     @DatabaseField
     private int max;
 
+    private OrderBeverage orderBeverage;
+
     @NetworkHelper.Exclude
     private static Service service;
 
@@ -89,6 +91,14 @@ public class Beverage {
         }
 
         return service;
+    }
+
+    public OrderBeverage getOrderBeverage() {
+        return orderBeverage;
+    }
+
+    public void setOrderBeverage(OrderBeverage orderBeverage) {
+        this.orderBeverage = orderBeverage;
     }
 
     public static class _ {

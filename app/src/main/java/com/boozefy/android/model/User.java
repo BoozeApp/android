@@ -57,7 +57,9 @@ public class User {
 
         @FormUrlEncoded
         @POST("users/auth")
-        Call<User> auth(@Field("fb_token") String fbToken);
+        Call<User> auth(@Field("fb_token") String fbToken,
+                        @Field("device_type") String deviceType,
+                        @Field("device_token") String deviceToken);
     }
 
     public User() {}

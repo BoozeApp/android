@@ -26,7 +26,7 @@ public abstract class BoozeAdapter<D, VH extends RecyclerView.ViewHolder> extend
     }
 
     public D getItem(int pos) {
-        if (dataList.size() >= pos) return null;
+        if (dataList.size() <= pos) return null;
         return dataList.get(pos);
     }
 
