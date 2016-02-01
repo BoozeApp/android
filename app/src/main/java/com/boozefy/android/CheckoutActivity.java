@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.PersistableBundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -11,7 +12,6 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
@@ -27,6 +27,7 @@ import com.google.gson.JsonParser;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import butterknife.Bind;
@@ -133,13 +134,13 @@ public class CheckoutActivity extends AppCompatActivity {
                 }
 
                 if (payAmount >= total) {
-                    lTextChange.setText("Bs. " + String.valueOf(payAmount - total));
+                    lTextChange.setText(String.format(Locale.ENGLISH, getString(R.string.text_price), payAmount - total));
                     lButtonOrder.setTextColor(ContextCompat.getColor(CheckoutActivity.this,
                                                                             R.color.colorAccent));
                     lTextChange.setTextColor(ContextCompat.getColor(CheckoutActivity.this,
                                                                             R.color.textPrice));
                 } else {
-                    lTextChange.setText("Bs. 0.00");
+                    lTextChange.setText(String.format(Locale.ENGLISH, getString(R.string.text_price), 0.0));
                     lTextChange.setTextColor(ContextCompat.getColor(CheckoutActivity.this,
                                                                             R.color.textError));
                     lButtonOrder.setTextColor(ContextCompat.getColor(CheckoutActivity.this,
@@ -161,7 +162,7 @@ public class CheckoutActivity extends AppCompatActivity {
                 if (payAmount < total) return;
 
                 progressOrder = new ProgressDialog(CheckoutActivity.this);
-                progressOrder.setMessage("Creating order, please wait...");
+                progressOrder.setMessage(getString(R.string.dialog_creating_order));
                 progressOrder.setIndeterminate(true);
                 progressOrder.show();
 
@@ -185,14 +186,18 @@ public class CheckoutActivity extends AppCompatActivity {
                 if (response.body() != null) {
                     addBeverages(response.body());
                 } else {
-                    Log.d("ERROR", response.message());
+                    Snackbar.make(lToolbar,
+                            R.string.snackbar_check_your_internet_connection,
+                            Snackbar.LENGTH_LONG).show();
                     progressOrder.dismiss();
                 }
             }
 
             @Override
             public void onFailure(Throwable t) {
-                Log.d("FAIL", t.getMessage());
+                Snackbar.make(lToolbar,
+                        R.string.snackbar_check_your_internet_connection,
+                        Snackbar.LENGTH_LONG).show();
                 progressOrder.dismiss();
             }
         });
@@ -219,14 +224,18 @@ public class CheckoutActivity extends AppCompatActivity {
                             placeOrder(order);
                         }
                     } else {
-                        Log.d("ERROR", response.message());
+                        Snackbar.make(lToolbar,
+                                R.string.snackbar_check_your_internet_connection,
+                                Snackbar.LENGTH_LONG).show();
                         progressOrder.dismiss();
                     }
                 }
 
                 @Override
                 public void onFailure(Throwable t) {
-                    Log.d("FAIL", t.getMessage());
+                    Snackbar.make(lToolbar,
+                            R.string.snackbar_check_your_internet_connection,
+                            Snackbar.LENGTH_LONG).show();
                     progressOrder.dismiss();
                 }
             });
@@ -244,17 +253,23 @@ public class CheckoutActivity extends AppCompatActivity {
             public void onResponse(Response<Order> response) {
                 if (response.body() != null) {
                     Intent intent = new Intent(CheckoutActivity.this, ThankYouActivity.class);
+                    intent.putExtra("orderId", response.body().getId());
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     startActivity(intent);
                     finish();
                 } else {
-                    Log.d("ERROR", response.message());
+                    Snackbar.make(lToolbar,
+                            R.string.snackbar_check_your_internet_connection,
+                            Snackbar.LENGTH_LONG).show();
                     progressOrder.dismiss();
                 }
             }
 
             @Override
             public void onFailure(Throwable t) {
-                Log.d("FAIL", t.getMessage());
+                Snackbar.make(lToolbar,
+                        R.string.snackbar_check_your_internet_connection,
+                        Snackbar.LENGTH_LONG).show();
                 progressOrder.dismiss();
             }
         });

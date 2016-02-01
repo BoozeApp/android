@@ -15,6 +15,7 @@ import com.boozefy.android.model.User;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -57,6 +58,10 @@ public class OrdersAdapter extends BoozeAdapter<Order, OrdersAdapter.ViewHolder>
             return context;
         }
 
+        public String getString(int id) {
+            return context.getString(id);
+        }
+
         @Override
         public void onClick(View view) {
             if (onItemClickListener != null) {
@@ -93,23 +98,23 @@ public class OrdersAdapter extends BoozeAdapter<Order, OrdersAdapter.ViewHolder>
                 Date date = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").parse(order.getCreatedAt());
                 holder.lTopText.setText(new SimpleDateFormat("dd/MM/yyyy").format(date));
             } catch (ParseException e) {
-                holder.lTopText.setText("Your order");
+                holder.lTopText.setText(R.string.title_your_order);
             }
 
-            holder.lBottomText.setText("Bs. " + order.getAmount());
+            holder.lBottomText.setText(String.format(Locale.ENGLISH, holder.getString(R.string.text_price), order.getAmount()));
 
             switch (order.getStatus()) {
                 case placed:
-                    holder.lRightText.setText("Processing...");
+                    holder.lRightText.setText(R.string.text_processing);
                     break;
                 case in_transit:
-                    holder.lRightText.setText("Out for delivery");
+                    holder.lRightText.setText(R.string.text_out_for_delivery);
                     break;
                 case fulfilled:
-                    holder.lRightText.setText("Delivered");
+                    holder.lRightText.setText(R.string.text_delivered);
                     break;
                 case rejected:
-                    holder.lRightText.setText("Rejected");
+                    holder.lRightText.setText(R.string.text_rejected);
                     break;
             }
         } else {
@@ -118,16 +123,16 @@ public class OrdersAdapter extends BoozeAdapter<Order, OrdersAdapter.ViewHolder>
 
             switch (order.getStatus()) {
                 case placed:
-                    holder.lRightText.setText("Waiting for delivery");
+                    holder.lRightText.setText(R.string.text_waiting_for_delivery);
                     break;
                 case in_transit:
-                    holder.lRightText.setText("In transit");
+                    holder.lRightText.setText(R.string.text_in_transit);
                     break;
                 case fulfilled:
-                    holder.lRightText.setText("Delivered");
+                    holder.lRightText.setText(R.string.text_delivered);
                     break;
                 case rejected:
-                    holder.lRightText.setText("Rejected");
+                    holder.lRightText.setText(R.string.text_rejected);
                     break;
             }
         }

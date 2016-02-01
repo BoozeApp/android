@@ -1,0 +1,109 @@
+<resources>
+    <array name="spinner_city">
+        <item>La Paz</item>
+    </array>
+
+    <string name="fb_id">961863003850867</string>
+
+    <string name="label_booze_selection">Nuevo pedido</string>
+    <string name="label_checkout">Checkout</string>
+
+    <string name="app_name">Booze</string>
+    <string name="action_sign_out">Salir</string>
+
+    <string name="title_checkout">Checkout</string>
+    <string name="text_total">Total:</string>
+
+    <string name="title_thank_you">Gracias!</string>
+    <string name="text_thank_you">Tu pedido está siendo procesado.\n Se le notificará tan pronto la entrega este en camino.</string>
+
+    <string name="title_your_order">Su orden</string>
+
+    <string name="text_message_explanation">Si proporcionó una dirección incorrecta o un número de teléfono incorrecto, puede enviar un mensaje con su número de teléfono para que podamos entrar en contacto con usted.</string>
+
+    <string name="text_price">Bs. %.2f</string>
+    <string name="text_my_money">Pagaré con   Bs.</string>
+    <string name="text_your_change">Su cambio es</string>
+    <string name="text_change">Cambio</string>
+    <string name="text_address">Dirección</string>
+    <string name="text_status">Estado del pedido:</string>
+
+    <string name="text_processing">Procesando…</string>
+    <string name="text_out_for_delivery">Entrega en camino</string>
+    <string name="text_delivered">Entregado</string>
+    <string name="text_rejected">Rechazado</string>
+    <string name="text_waiting_for_delivery">Esperando para la entrega</string>
+    <string name="text_in_transit">En transito</string>
+
+    <string name="text_street">Calle</string>
+    <string name="text_number">Número</string>
+    <string name="text_zip_code">Zip code</string>
+    <string name="text_city">Ciudad</string>
+    <string name="text_telephone">Número telefónico</string>
+    <string name="text_message">Mensaje</string>
+
+    <string name="edit_label_name">Nombre</string>
+    <string name="edit_label_email_address">Correo electrónico</string>
+    <string name="edit_label_password">Contraseña</string>
+
+    <string name="button_find_location">Encuentre mi ubicación</string>
+    <string name="button_see_orders">Vea sus pedidos</string>
+    <string name="button_done">¡He terminado!</string>
+    <string name="button_deliver_here">Entrega en esta ubicación</string>
+    <string name="button_cancel">Cancelar</string>
+    <string name="button_order_now">Haga su pedido ahora</string>
+    <string name="button_open_navigation">Abrir Navegación</string>
+    <string name="button_yes">Si</string>
+    <string name="button_no">No</string>
+    <string name="button_deliver_this_order">Entregar este pedido</string>
+    <string name="button_sign_in_using_facebook">Regístrate con una cuenta de Facebook</string>
+    <string name="button_see_order_status">Ver estado del pedido</string>
+    <string name="button_review_orders">Revisa tu orden</string>
+    <string name="button_send_message">Enviar um mensaje al cliente</string>
+    <string name="button_send">Enviar</string>
+    <string name="button_sign_in">Cuenta</string>
+    <string name="button_sign_up">Registrar</string>
+
+    <string name="dialog_title_your_address">Tu dirección</string>
+    <string name="dialog_loading_location">Cargando ubicación, por favor espera…</string>
+    <string name="dialog_title_deliver_confirmation">Entregar pedido</string>
+    <string name="dialog_message_deliver_confirmation">¿Está seguro que este es pedido?\nEl cliente recibirá un mensaje de inmediato</string>
+    <string name="dialog_loading_generic">Por favor espera…</string>
+    <string name="dialog_creating_order">Creando pedido, por favor espera…</string>
+    <string name="dialog_sending_message">Mandando mensaje, por favor espera…</string>
+    <string name="dialog_title_your_contact">Su contacto</string>
+
+    <string name="push_title_in_transit">Actualización del pedido</string>
+    <string name="push_message_in_transit">Su pedido salió para entrega!</string>
+    <string name="push_title_placed">Nuevo pedido</string>
+    <string name="push_message_placed">Un nuevo pedido fue registrado!</string>
+    <string name="push_title_message">Recibió un nuevo mensaje</string>
+
+    <string name="text_or">o</string>
+    <string name="text_sign_up">¿No tienes una cuenta?? Regístrate!</string>
+
+    <string name="tab_my_orders">Mis pedidos</string>
+    <string name="tab_past_orders">Histórico de pedidos</string>
+    <string name="tab_for_delivery">Para entregar</string>
+    <string name="tab_in_transit">En tránsito</string>
+    <string name="tab_delivered">Entregado</string>
+
+    <string name="snackbar_could_not_find_location">No se pudo encontrar la ubicación</string>
+    <string name="snackbar_could_not_detect_gps">No se pudo encontrar la dirección vía GPS</string>
+    <string name="snackbar_you_need_to_allow">Necesita activar el GPS</string>
+    <string name="snackbar_you_need_to_accept">Tienes que aceptar los permisos</string>
+    <string name="snackbar_check_your_internet_connection">Revisa tu conexión de internet</string>
+    <string name="snackbar_message_sent">Mensaje mandado con éxito</string>
+    <string name="snackbar_email_not_found">Dirección de correo electrónico no encontrado</string>
+    <string name="snackbar_password_incorrect">Contraseña incorrecta</string>
+    <string name="snackbar_email_already_in_use">Correo electrónico ya en uso</string>
+
+    <string name="title_activity_sign_in">BoozeApp</string>
+    <string name="title_activity_thank_you">Gracias</string>
+    <string name="title_activity_orders">Pedidos</string>
+    <string name="title_activity_order">Pedido</string>
+    <string name="title_activity_sign_up">Registrate</string>
+
+    <string name="error_text_too_short">Mensaje demasiado corta</string>
+    <string name="error_invalid_email">Correo electrónico incorrecto</string>
+</resources>

@@ -28,6 +28,18 @@ public class NetworkHelper {
             gsonBuilder.registerTypeAdapter(User.class, new UserDeserializer());
             Gson gson = gsonBuilder.create();*/
 
+            /*OkHttpClient httpClient = new OkHttpClient();
+            httpClient.interceptors().add(new Interceptor() {
+                @Override
+                public Response intercept(Chain chain) throws IOException {
+                    Response response = chain.proceed(chain.request());
+
+                    Log.d("NETWORKHELPER", "MESSAGE: [" + response.code() + "] " + response.message());
+
+                    return response;
+                }
+            });*/
+
             GsonBuilder gsonBuilder = new GsonBuilder();
             gsonBuilder.setExclusionStrategies(new AnnotationExclusionStrategy());
             Gson gson = gsonBuilder.create();
@@ -35,6 +47,7 @@ public class NetworkHelper {
             retrofit = new Retrofit.Builder()
                 .baseUrl(baseURL)
                 .addConverterFactory(GsonConverterFactory.create(gson))
+                //.client(httpClient)
                 .build();
         }
 

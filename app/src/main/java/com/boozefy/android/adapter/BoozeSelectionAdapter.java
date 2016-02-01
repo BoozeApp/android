@@ -15,6 +15,7 @@ import com.boozefy.android.model.Beverage;
 import com.squareup.picasso.Picasso;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import butterknife.Bind;
@@ -57,6 +58,10 @@ public class BoozeSelectionAdapter extends BoozeAdapter<Beverage, BoozeSelection
             ButterKnife.bind(this, itemView);
 
             this.context = itemView.getContext();
+        }
+
+        public String getString(int id) {
+            return context.getString(id);
         }
 
         public void refreshListeners(final Beverage beverage) {
@@ -184,7 +189,7 @@ public class BoozeSelectionAdapter extends BoozeAdapter<Beverage, BoozeSelection
             //.tag(context)
             .into(holder.lPicture);
         holder.lName.setText(beverage.getName());
-        holder.lPrice.setText("Bs. " + beverage.getPrice());
+        holder.lPrice.setText(String.format(Locale.ENGLISH, holder.getString(R.string.text_price), beverage.getPrice()));
     }
 
 }

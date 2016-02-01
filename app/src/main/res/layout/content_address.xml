@@ -14,43 +14,58 @@
     tools:showIn="@layout/activity_address">
 
     <ImageView
-        android:layout_width="120dp"
-        android:layout_height="120dp"
-        android:layout_marginTop="24dp"
-        android:layout_gravity="center" />
-
-    <Button
-        android:id="@+id/action_current_location"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:text="Use current location"
+        android:layout_width="160dp"
+        android:layout_height="160dp"
+        android:src="@drawable/booze_app"
         android:layout_gravity="center"
-        style="@style/Widget.AppCompat.Button.Colored" />
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="12dp" />
 
-    <TextView
+    <LinearLayout android:id="@+id/layout_staff"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:gravity="center"
-        android:text="OR"
-        android:textColor="@color/colorAccent"
-        style="@style/TextAppearance.AppCompat.Medium" />
+        android:orientation="vertical">
 
-    <EditText
-        android:layout_width="240dp"
+        <Button android:id="@+id/button_review_orders"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/button_review_orders"
+            android:layout_gravity="center"
+            android:layout_marginTop="12dp"
+            style="@style/Widget.AppCompat.Button.Colored" />
+
+    </LinearLayout>
+
+    <LinearLayout android:id="@+id/layout_client"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:hint="Type the address..."
-        android:layout_gravity="center"
-        android:gravity="center" />
+        android:orientation="vertical">
 
-    <Button android:id="@+id/button_orders"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Orders"
-        android:layout_gravity="center"
-        android:layout_marginTop="12dp"
-        style="@style/Widget.AppCompat.Button.Colored" />
+        <Button
+            android:id="@+id/action_current_location"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="@string/button_find_location"
+            android:layout_gravity="center"
+            style="@style/Widget.AppCompat.Button.Colored" />
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:gravity="center"
+            android:text="@string/text_or"
+            android:textColor="@color/colorAccent"
+            style="@style/TextAppearance.AppCompat.Medium" />
+
+        <Button android:id="@+id/button_orders"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/button_see_orders"
+            android:layout_gravity="center"
+            android:layout_marginTop="12dp"
+            style="@style/Widget.AppCompat.Button.Colored" />
+
+    </LinearLayout>
 </LinearLayout>

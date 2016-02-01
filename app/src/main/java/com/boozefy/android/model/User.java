@@ -42,6 +42,8 @@ public class User {
     @DatabaseField
     private LEVEL level;
     @DatabaseField
+    private String telephone;
+    @DatabaseField
     private String accessToken;
     @DatabaseField
     private double latitude;
@@ -56,10 +58,30 @@ public class User {
         Call<User> me(@Query("access_token") String accessToken);
 
         @FormUrlEncoded
-        @POST("users/auth")
+        @POST("users/me")
+        Call<User> me(@Query("access_token") String accessToken,
+                      @Field("telephone") String telephone);
+
+        @FormUrlEncoded
+        @POST("users/fb-auth")
         Call<User> auth(@Field("fb_token") String fbToken,
                         @Field("device_type") String deviceType,
                         @Field("device_token") String deviceToken);
+
+        @FormUrlEncoded
+        @POST("users/auth")
+        Call<User> auth(@Field("email") String email,
+                        @Field("password") String password,
+                        @Field("device_type") String deviceType,
+                        @Field("device_token") String deviceToken);
+
+        @FormUrlEncoded
+        @POST("users")
+        Call<User> create(@Field("name") String name,
+                          @Field("email") String email,
+                          @Field("password") String password,
+                          @Field("device_type") String deviceType,
+                          @Field("device_token") String deviceToken);
     }
 
     public User() {}
@@ -112,6 +134,14 @@ public class User {
         this.level = level;
     }
 
+    public String getTelephone() {
+        return telephone;
+    }
+
+    public void setTelephone(String telephone) {
+        this.telephone = telephone;
+    }
+
     public double getLatitude() {
         return latitude;
     }
@@ -134,6 +164,13 @@ public class User {
 
     public void setAccessToken(String accessToken) {
         this.accessToken = accessToken;
+    }
+
+    public static boolean isValidEmailAddress(String email) {
+        String ePattern = "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$";
+        java.util.regex.Pattern p = java.util.regex.Pattern.compile(ePattern);
+        java.util.regex.Matcher m = p.matcher(email);
+        return m.matches();
     }
 
     public static Service getService() {
@@ -182,6 +219,7 @@ public class User {
 
         public static void remove(Context context) {
             loadUserDao(context);
+            load(context);
 
             if (user != null) {
                 try {
@@ -190,6 +228,8 @@ public class User {
                     e.printStackTrace();
                 }
             }
+
+            user = null;
         }
     }
 }

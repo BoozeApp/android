@@ -2,11 +2,11 @@ package com.boozefy.android;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -19,6 +19,7 @@ import com.google.gson.JsonParser;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -71,7 +72,7 @@ public class BoozeSelectionActivity extends AppCompatActivity {
         adapterBooze.setOnTotalPriceChangedListener(new BoozeSelectionAdapter.OnTotalPriceChangedListener() {
             @Override
             public void onTotalPriceChanged(double newPrice) {
-                lTextTotal.setText("Bs. " + newPrice);
+                lTextTotal.setText(String.format(Locale.ENGLISH, getString(R.string.text_price), newPrice));
 
                 if (newPrice > 0) {
                     lButtonDone.setVisibility(View.VISIBLE);
@@ -106,12 +107,18 @@ public class BoozeSelectionActivity extends AppCompatActivity {
                     Beverage._.save(dataList, BoozeSelectionActivity.this);
 
                     adapterBooze.setDataList(dataList);
+                } else {
+                    Snackbar.make(lToolbar,
+                            R.string.snackbar_check_your_internet_connection,
+                            Snackbar.LENGTH_LONG).show();
                 }
             }
 
             @Override
             public void onFailure(Throwable t) {
-                Log.d("USER", "Err " + t.getMessage());
+                Snackbar.make(lToolbar,
+                        R.string.snackbar_check_your_internet_connection,
+                        Snackbar.LENGTH_LONG).show();
             }
         });
     }

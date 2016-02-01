@@ -1,10 +1,10 @@
 package com.boozefy.android.fragment;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -17,16 +17,18 @@ import com.boozefy.android.adapter.BoozeAdapter;
 import com.boozefy.android.adapter.OrdersAdapter;
 import com.boozefy.android.model.Order;
 import com.boozefy.android.model.User;
+import com.boozefy.android.view.SwipeRefreshLayout;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 public class OrdersFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
-
 
     public static final int FOR_DELIVERY = 1;
     public static final int IN_TRANSIT   = 2;
@@ -39,6 +41,11 @@ public class OrdersFragment extends Fragment implements SwipeRefreshLayout.OnRef
 
     private OrdersAdapter adapter;
     private List<Order> orderList = new ArrayList<>();
+
+    @Bind(R.id.swipe_refresh)
+    public SwipeRefreshLayout lSwipeRefreshLayout;
+    @Bind(R.id.list_orders)
+    public RecyclerView lListOrders;
 
     public OrdersFragment() {
     }
@@ -66,19 +73,16 @@ public class OrdersFragment extends Fragment implements SwipeRefreshLayout.OnRef
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.fragment_orders_list, container, false);
+        View view = inflater.inflate(R.layout.fragment_orders, container, false);
+
+        ButterKnife.bind(this, view);
 
         adapter = new OrdersAdapter(getActivity());
+        lListOrders.setLayoutManager(new LinearLayoutManager(getActivity()));
+        lListOrders.setAdapter(adapter);
 
-        if (view instanceof RecyclerView) {
-            Context context = view.getContext();
-            RecyclerView recyclerView = (RecyclerView) view;
-
-            recyclerView.setLayoutManager(new LinearLayoutManager(context));
-            recyclerView.setAdapter(adapter);
-        }
-
-        onRefresh();
+        lSwipeRefreshLayout.setScrollView(lListOrders);
+        lSwipeRefreshLayout.setOnRefreshListener(this);
 
         adapter.setOnItemClickListener(new BoozeAdapter.OnItemClickListener() {
             @Override
@@ -96,7 +100,16 @@ public class OrdersFragment extends Fragment implements SwipeRefreshLayout.OnRef
     }
 
     @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        onRefresh();
+    }
+
+    @Override
     public void onRefresh() {
+        lSwipeRefreshLayout.setRefreshing(true);
+
         final Call<List<Order>> ordersCall;
 
         switch (mType) {
@@ -149,13 +162,20 @@ public class OrdersFragment extends Fragment implements SwipeRefreshLayout.OnRef
 
                     adapter.setDataList(orderList);
                 } else {
-
+                    Snackbar.make(lSwipeRefreshLayout,
+                            R.string.snackbar_check_your_internet_connection,
+                            Snackbar.LENGTH_LONG).show();
                 }
+
+                lSwipeRefreshLayout.setRefreshing(false);
             }
 
             @Override
             public void onFailure(Throwable t) {
-
+                lSwipeRefreshLayout.setRefreshing(false);
+                Snackbar.make(lSwipeRefreshLayout,
+                        R.string.snackbar_check_your_internet_connection,
+                        Snackbar.LENGTH_LONG).show();
             }
         });
     }

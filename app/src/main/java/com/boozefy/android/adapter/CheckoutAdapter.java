@@ -12,6 +12,8 @@ import com.boozefy.android.R;
 import com.boozefy.android.model.Beverage;
 import com.squareup.picasso.Picasso;
 
+import java.util.Locale;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
@@ -56,6 +58,10 @@ public class CheckoutAdapter extends BoozeAdapter<CheckoutAdapter.BoozeAmount, C
         public Context getContext() {
             return context;
         }
+
+        public String getString(int id) {
+            return context.getString(id);
+        }
     }
 
     @Override
@@ -79,7 +85,8 @@ public class CheckoutAdapter extends BoozeAdapter<CheckoutAdapter.BoozeAmount, C
                 //.tag(context)
                 .into(holder.lPicture);
         holder.lName.setText(boozeAmount.beverage.getName());
-        holder.lPriceUnit.setText("Bs. " + boozeAmount.beverage.getPrice() + " / u");
-        holder.lPriceTotal.setText("Bs. " + (boozeAmount.beverage.getPrice() * boozeAmount.amount));
+
+        holder.lPriceUnit.setText(String.format(Locale.ENGLISH, holder.getString(R.string.text_price), boozeAmount.beverage.getPrice()) + " / u");
+        holder.lPriceTotal.setText(String.format(Locale.ENGLISH, holder.getString(R.string.text_price), (boozeAmount.beverage.getPrice() * boozeAmount.amount)));
     }
 }

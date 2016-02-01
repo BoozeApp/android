@@ -7,11 +7,13 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 
 import com.boozefy.android.OrderActivity;
 import com.boozefy.android.R;
+import com.boozefy.android.ReplyActivity;
 import com.boozefy.android.model.Order;
 import com.boozefy.android.model.User;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
@@ -66,6 +68,11 @@ public class GcmIntentService extends IntentService {
 
                 if (code.equals("order-in-transit")) {
                     orderInTransitNotification(Long.parseLong(extras.getString("orderId", "0")));
+                } else if (code.equals("order-placed")) {
+                    orderPlacedNotification(Long.parseLong(extras.getString("orderId", "0")));
+                } else if (code.equals("order-message")) {
+                    orderMessageNotification(Long.parseLong(extras.getString("orderId", "0")),
+                                             extras.getString("message", ""));
                 }
 
                 Log.d("GCM", "NEW GCM MESSAGE WITH CODE " + code);
@@ -97,9 +104,97 @@ public class GcmIntentService extends IntentService {
                     .setContentTitle(getString(R.string.push_title_in_transit))
                     .setContentIntent(pIntentToApp)
                     .setContentText(getString(R.string.push_message_in_transit))
-                    .setSmallIcon(R.mipmap.ic_launcher)
+                    .setSmallIcon(R.drawable.ic_stat_name)
                     .setAutoCancel(true)
                     .build();
+
+                NotificationManager notificationManager =
+                        (NotificationManager) GcmIntentService.this.getSystemService(Activity.NOTIFICATION_SERVICE);
+
+                notificationManager.notify((int) orderId, n);
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+
+            }
+        });
+
+    }
+
+    private void orderPlacedNotification(final long orderId) {
+        User user = User._.load(this);
+
+        if (user == null) return;
+
+        Order.getService().get(orderId, user.getAccessToken()).enqueue(new Callback<Order>() {
+            @Override
+            public void onResponse(Response<Order> response) {
+                Order order = response.body();
+
+                if (order == null) return;
+
+                Intent intentToApp = new Intent(getApplicationContext(), OrderActivity.class);
+                intentToApp.putExtra("orderId", orderId);
+
+                PendingIntent pIntentToApp = PendingIntent.getActivity(getApplicationContext(),
+                        (int) orderId, intentToApp, 0);
+
+                Notification n = new NotificationCompat.Builder(GcmIntentService.this)
+                        .setContentTitle(getString(R.string.push_title_placed))
+                        .setContentIntent(pIntentToApp)
+                        .setContentText(getString(R.string.push_message_placed))
+                        .setSmallIcon(R.drawable.ic_stat_name)
+                        .setAutoCancel(true)
+                        .build();
+
+                NotificationManager notificationManager =
+                        (NotificationManager) GcmIntentService.this.getSystemService(Activity.NOTIFICATION_SERVICE);
+
+                notificationManager.notify((int) orderId, n);
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+
+            }
+        });
+
+    }
+
+    private void orderMessageNotification(final long orderId, final String message) {
+        User user = User._.load(this);
+
+        if (user == null) return;
+
+        Order.getService().get(orderId, user.getAccessToken()).enqueue(new Callback<Order>() {
+            @Override
+            public void onResponse(Response<Order> response) {
+                Order order = response.body();
+
+                if (order == null) return;
+
+                Intent intentToAnswer = new Intent(getApplicationContext(), ReplyActivity.class);
+                intentToAnswer.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                intentToAnswer.putExtra("orderId", orderId);
+
+                TaskStackBuilder taskStackBuilder = TaskStackBuilder.create(getApplicationContext());
+                taskStackBuilder.addParentStack(ReplyActivity.class);
+                taskStackBuilder.addNextIntent(intentToAnswer);
+
+                PendingIntent pIntentToAnswer = taskStackBuilder.getPendingIntent(0,
+                        PendingIntent.FLAG_UPDATE_CURRENT);
+
+                Notification n = new NotificationCompat.Builder(GcmIntentService.this)
+                        .setContentTitle(getString(R.string.push_title_message))
+                        .setContentText(message)
+                        .addAction(R.drawable.ic_reply, getString(R.string.button_reply), pIntentToAnswer)
+                        .setSmallIcon(R.drawable.ic_stat_name)
+                        .setStyle(new android.support.v4.app.NotificationCompat.BigTextStyle()
+                            .bigText(message))
+                        .setAutoCancel(true)
+                        .setWhen(0)
+                        .build();
 
                 NotificationManager notificationManager =
                         (NotificationManager) GcmIntentService.this.getSystemService(Activity.NOTIFICATION_SERVICE);

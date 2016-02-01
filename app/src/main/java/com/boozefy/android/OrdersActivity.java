@@ -54,16 +54,16 @@ public class OrdersActivity extends AppCompatActivity {
 
     private void initClient() {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(OrdersFragment.newInstance(OrdersFragment.MY_ORDERS), "My orders");
-        adapter.addFragment(OrdersFragment.newInstance(OrdersFragment.PAST_ORDERS), "Past orders");
+        adapter.addFragment(OrdersFragment.newInstance(OrdersFragment.MY_ORDERS), getString(R.string.tab_my_orders));
+        adapter.addFragment(OrdersFragment.newInstance(OrdersFragment.PAST_ORDERS), getString(R.string.tab_past_orders));
         lViewPager.setAdapter(adapter);
     }
 
     private void initStaff() {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(OrdersFragment.newInstance(OrdersFragment.FOR_DELIVERY), "For delivery");
-        adapter.addFragment(OrdersFragment.newInstance(OrdersFragment.IN_TRANSIT), "In transit");
-        adapter.addFragment(OrdersFragment.newInstance(OrdersFragment.DELIVERED), "Delivered");
+        adapter.addFragment(OrdersFragment.newInstance(OrdersFragment.FOR_DELIVERY), getString(R.string.tab_for_delivery));
+        adapter.addFragment(OrdersFragment.newInstance(OrdersFragment.IN_TRANSIT), getString(R.string.tab_in_transit));
+        adapter.addFragment(OrdersFragment.newInstance(OrdersFragment.DELIVERED), getString(R.string.tab_delivered));
         lViewPager.setAdapter(adapter);
     }
 

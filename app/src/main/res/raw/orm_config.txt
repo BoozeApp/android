@@ -25,6 +25,9 @@ fieldName=picture
 fieldName=level
 # --field-end--
 # --field-start--
+fieldName=telephone
+# --field-end--
+# --field-start--
 fieldName=accessToken
 # --field-end--
 # --field-start--

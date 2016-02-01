@@ -101,6 +101,12 @@ public class Order {
         Call<Order> reject(@Path("orderId") long orderId,
                           @Query("access_token") String accessToken);
 
+        @FormUrlEncoded
+        @POST("orders/{orderId}/message")
+        Call<Order> message(@Path("orderId") long orderId,
+                            @Query("access_token") String accessToken,
+                            @Field("message") String message);
+
         @GET("orders/placed")
         Call<List<Order>> placed(@Query("access_token") String accessToken);
 

@@ -13,7 +13,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Street" />
+            android:text="@string/text_street" />
 
         <EditText android:id="@+id/edit_street"
             android:layout_width="match_parent"
@@ -39,7 +39,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Number" />
+                android:text="@string/text_number" />
 
             <EditText android:id="@+id/edit_number"
                 android:layout_width="match_parent"
@@ -58,7 +58,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Zip code" />
+                android:text="@string/text_zip_code" />
 
             <EditText android:id="@+id/edit_zip_code"
                 android:layout_width="match_parent"
@@ -77,7 +77,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="City" />
+            android:text="@string/text_city" />
 
         <Spinner android:id="@+id/spinner_city"
             android:layout_width="match_parent"

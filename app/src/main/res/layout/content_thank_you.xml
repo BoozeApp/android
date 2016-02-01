@@ -33,7 +33,7 @@
         android:layout_marginTop="32dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="See order status"
+        android:text="@string/button_see_order_status"
         android:layout_gravity="center"
         style="@style/Widget.AppCompat.Button.Colored" />
 

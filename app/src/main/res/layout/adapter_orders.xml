@@ -7,8 +7,6 @@
     android:padding="16dp"
     android:weightSum="1"
     android:clickable="true"
-    android:focusable="true"
-    android:focusableInTouchMode="true"
     android:background="@drawable/list_selector">
 
     <LinearLayout
@@ -23,7 +21,7 @@
             android:layout_weight="1"
             android:layout_gravity="center_vertical"
             android:layout_marginLeft="16dp"
-            android:text="Your order"
+            android:text=""
             style="@style/TextAppearance.AppCompat.Body1" />
 
         <TextView android:id="@+id/text_total_price"
@@ -32,7 +30,7 @@
             android:layout_gravity="center_vertical"
             android:layout_marginLeft="16dp"
             android:textColor="@color/textPrice"
-            android:text="Bs. 640,00"
+            android:text=""
             style="@style/TextAppearance.AppCompat.Caption" />
 
     </LinearLayout>
@@ -43,7 +41,7 @@
         android:layout_weight="1"
         android:layout_gravity="center_vertical"
         android:layout_marginLeft="16dp"
-        android:text="Processing..."
+        android:text=""
         style="@style/TextAppearance.AppCompat.Body1" />
 
 </LinearLayout>

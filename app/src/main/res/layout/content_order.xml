@@ -1,150 +1,199 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.boozefy.android.view.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    android:id="@+id/swipe_refresh"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.boozefy.android.OrderActivity"
     tools:showIn="@layout/activity_order">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:weightSum="1"
-        android:orientation="vertical">
+    <RelativeLayout android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin">
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/list_booze"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1" />
-
-        <LinearLayout android:id="@+id/layout_staff"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:visibility="gone">
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:text="Change "
-                    android:layout_marginRight="16dp"
-                    android:gravity="center"
-                    style="@style/TextAppearance.AppCompat.Medium" />
-
-                <TextView android:id="@+id/text_change"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Bs. 175.00"
-                    android:gravity="center"
-                    android:textColor="@color/textPrice"
-                    style="@style/TextAppearance.AppCompat.Large" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginTop="16dp"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:text="Address "
-                    android:layout_marginRight="16dp"
-                    android:gravity="center"
-                    style="@style/TextAppearance.AppCompat.Medium" />
-
-                <TextView android:id="@+id/text_address"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:text="Av 14 de Septiembre, 6051 - La Paz, Bolivia"
-                    android:gravity="start"/>
-
-            </LinearLayout>
-
-            <Button android:id="@+id/button_deliver_this_order"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Deliver this order"
-                android:layout_gravity="center"
-                android:layout_marginTop="16dp"
-                android:layout_marginBottom="32dp"
-                style="@style/Widget.AppCompat.Button.Colored" />
-
-        </LinearLayout>
-
-        <LinearLayout android:id="@+id/layout_client"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:weightSum="1"
             android:orientation="vertical">
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:orientation="horizontal">
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/list_booze"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
 
-                <TextView
+            <LinearLayout android:id="@+id/layout_staff"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:text="Total "
-                    android:layout_marginRight="16dp"
-                    android:gravity="center"
-                    style="@style/TextAppearance.AppCompat.Medium" />
+                    android:orientation="horizontal">
 
-                <TextView android:id="@+id/text_total"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Bs. 175.00"
-                    android:gravity="center"
-                    android:textColor="@color/textPrice"
-                    style="@style/TextAppearance.AppCompat.Large" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="@string/text_change"
+                        android:layout_marginRight="16dp"
+                        android:gravity="center"
+                        style="@style/TextAppearance.AppCompat.Medium" />
 
-            </LinearLayout>
+                    <TextView android:id="@+id/text_change"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text=""
+                        android:gravity="center"
+                        android:textColor="@color/textPrice"
+                        style="@style/TextAppearance.AppCompat.Large" />
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:orientation="horizontal">
+                </LinearLayout>
 
-                <TextView
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:text="Status "
-                    android:layout_marginRight="16dp"
-                    android:gravity="center"
-                    style="@style/TextAppearance.AppCompat.Medium" />
+                    android:layout_marginTop="16dp"
+                    android:orientation="horizontal">
 
-                <TextView android:id="@+id/text_status"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Out for delivery"
-                    android:gravity="center"
-                    style="@style/TextAppearance.AppCompat.Large" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="@string/text_address"
+                        android:layout_marginRight="16dp"
+                        android:gravity="center"
+                        style="@style/TextAppearance.AppCompat.Medium" />
 
+                    <TextView android:id="@+id/text_address"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text=""
+                        android:gravity="start"/>
+
+                </LinearLayout>
+
+                <android.support.v7.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+
+                            <Button android:id="@+id/button_deliver_this_order"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/button_deliver_this_order"
+                                android:layout_gravity="center"
+                                android:layout_marginRight="6dp"
+                                style="@style/Widget.AppCompat.Button.Colored" />
+
+                            <Button android:id="@+id/button_send_message"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/button_send_message"
+                                android:layout_gravity="center"
+                                android:layout_marginRight="6dp"
+                                style="@style/Widget.AppCompat.Button.Colored" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+
+                            <Button android:id="@+id/button_delivered"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/button_delivered"
+                                android:layout_gravity="center"
+                                style="@style/Widget.AppCompat.Button.Colored" />
+
+                            <Button android:id="@+id/button_call_client"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/button_call_client"
+                                android:layout_gravity="center"
+                                style="@style/Widget.AppCompat.Button.Colored" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </android.support.v7.widget.CardView>
             </LinearLayout>
 
+            <LinearLayout android:id="@+id/layout_client"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="@string/text_total"
+                        android:layout_marginRight="16dp"
+                        android:gravity="center"
+                        style="@style/TextAppearance.AppCompat.Medium" />
+
+                    <TextView android:id="@+id/text_total"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text=""
+                        android:gravity="center"
+                        android:textColor="@color/textPrice"
+                        style="@style/TextAppearance.AppCompat.Large" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="@string/text_status"
+                        android:layout_marginRight="16dp"
+                        android:gravity="center"
+                        style="@style/TextAppearance.AppCompat.Medium" />
+
+                    <TextView android:id="@+id/text_status"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/text_out_for_delivery"
+                        android:gravity="center"
+                        style="@style/TextAppearance.AppCompat.Large" />
+
+                </LinearLayout>
+
+            </LinearLayout>
         </LinearLayout>
-    </LinearLayout>
-</RelativeLayout>
+    </RelativeLayout>
+</com.boozefy.android.view.SwipeRefreshLayout>

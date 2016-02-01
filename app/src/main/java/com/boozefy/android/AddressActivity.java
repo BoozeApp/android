@@ -27,6 +27,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 
 import com.boozefy.android.helper.GeocoderHelper;
+import com.boozefy.android.model.User;
 
 import java.io.IOException;
 import java.util.List;
@@ -34,20 +35,27 @@ import java.util.Locale;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class AddressActivity extends AppCompatActivity {
 
-    @Bind(R.id.action_current_location)
-    public Button lCurrentLocation;
-
     @Bind(R.id.toolbar)
     public Toolbar lToolbar;
-
+    @Bind(R.id.layout_client)
+    public View lLayoutClient;
+    @Bind(R.id.action_current_location)
+    public Button lCurrentLocation;
     @Bind(R.id.button_orders)
     public Button lButtonOrders;
+    @Bind(R.id.layout_staff)
+    public View lLayoutStaff;
+    @Bind(R.id.button_review_orders)
+    public Button lButtonReviewOrders;
 
     public static final int REQUEST_PERMISSION_FINE_LOCATION = 10;
     private boolean foundLocation = false;
+    private User user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,29 +65,49 @@ public class AddressActivity extends AppCompatActivity {
 
         setSupportActionBar(lToolbar);
 
-        lCurrentLocation.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        user = User._.load(this);
 
-                if (ActivityCompat.checkSelfPermission(AddressActivity.this,
-                        Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (user.getLevel() == User.LEVEL.client) {
+            lLayoutClient.setVisibility(View.VISIBLE);
+            lLayoutStaff.setVisibility(View.GONE);
 
-                    ActivityCompat.requestPermissions(AddressActivity.this,
-                            new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                            REQUEST_PERMISSION_FINE_LOCATION);
-                } else {
-                    gatherUserLocation();
+            lCurrentLocation.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    if (ActivityCompat.checkSelfPermission(AddressActivity.this,
+                            Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+                        ActivityCompat.requestPermissions(AddressActivity.this,
+                                new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                                REQUEST_PERMISSION_FINE_LOCATION);
+                    } else {
+                        gatherUserLocation();
+                    }
                 }
-            }
-        });
+            });
 
-        lButtonOrders.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(AddressActivity.this, OrdersActivity.class);
-                startActivity(intent);
-            }
-        });
+            lButtonOrders.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(AddressActivity.this, OrdersActivity.class);
+                    startActivity(intent);
+                }
+            });
+
+        } else {
+            lLayoutClient.setVisibility(View.GONE);
+            lLayoutStaff.setVisibility(View.VISIBLE);
+
+            lButtonReviewOrders.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(AddressActivity.this, OrdersActivity.class);
+                    startActivity(intent);
+                }
+            });
+
+        }
 
     }
 
@@ -175,6 +203,7 @@ public class AddressActivity extends AppCompatActivity {
                 public void onClick(DialogInterface dialogInterface, int i) {
                     final ProgressDialog progressDialog = new ProgressDialog(AddressActivity.this);
                     progressDialog.setMessage(getString(R.string.dialog_loading_location));
+                    progressDialog.setCanceledOnTouchOutside(false);
                     progressDialog.show();
 
                     String addressLine = lEditStreet.getText().toString() + ", " +
@@ -205,15 +234,79 @@ public class AddressActivity extends AppCompatActivity {
                                 location.zipCode = lEditZipCode.getText().toString();
                             }
 
-                            Intent intent = new Intent(AddressActivity.this, BoozeSelectionActivity.class);
-                            intent.putExtra("location", location.toString());
-                            startActivity(intent);
+                            verifyTelephone(location);
                         }
                     });
                 }
             })
             .setNegativeButton(R.string.button_cancel, null)
             .create();
+            
+        try {
+            dialog.show();
+        } catch (Exception e) {
+
+        }
+    }
+
+    private void verifyTelephone(final GeocoderHelper.Location location) {
+
+        View layout = getLayoutInflater().inflate(R.layout.dialog_telephone, null, false);
+
+        final EditText lEditTelephone = (EditText) layout.findViewById(R.id.edit_telephone);
+
+        if (user.getTelephone() != null) {
+            lEditTelephone.setText(user.getTelephone());
+        }
+
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setTitle(R.string.dialog_title_your_contact)
+                .setView(layout)
+                .setPositiveButton(R.string.button_done, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                        final ProgressDialog progressDialog = new ProgressDialog(AddressActivity.this);
+                        progressDialog.setMessage(getString(R.string.dialog_loading_generic));
+                        progressDialog.setCanceledOnTouchOutside(false);
+                        progressDialog.show();
+
+                        User.getService().me(
+                            user.getAccessToken(),
+                            lEditTelephone.getText().toString()
+                        ).enqueue(new Callback<User>() {
+                            @Override
+                            public void onResponse(Response<User> response) {
+                                if (response.body() != null) {
+                                    user.setTelephone(lEditTelephone.getText().toString());
+                                    User._.save(user, AddressActivity.this);
+
+                                    Intent intent = new Intent(AddressActivity.this, BoozeSelectionActivity.class);
+                                    intent.putExtra("location", location.toString());
+                                    startActivity(intent);
+                                } else {
+                                    Snackbar.make(lToolbar,
+                                        R.string.snackbar_check_your_internet_connection,
+                                            Snackbar.LENGTH_LONG).show();
+                                }
+
+                                progressDialog.dismiss();
+                            }
+
+                            @Override
+                            public void onFailure(Throwable t) {
+                                Snackbar.make(lToolbar,
+                                    R.string.snackbar_check_your_internet_connection,
+                                        Snackbar.LENGTH_LONG).show();
+
+                                progressDialog.dismiss();
+                            }
+                        });
+
+                    }
+                })
+                .setNegativeButton(R.string.button_cancel, null)
+                .create();
 
         dialog.show();
     }
@@ -233,7 +326,12 @@ public class AddressActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_sign_out) {
+            User._.remove(this);
+            Intent intent = new Intent(this, SignInActivity.class);
+            startActivity(intent);
+            finish();
+
             return true;
         }
 
@@ -250,7 +348,8 @@ public class AddressActivity extends AppCompatActivity {
 
                 gatherUserLocation();
             } else {
-                Snackbar.make(lToolbar, "You need to accept", Snackbar.LENGTH_LONG).show();
+                Snackbar.make(lToolbar, R.string.snackbar_you_need_to_allow, Snackbar.LENGTH_LONG).show();
+                displayDialog(null);
             }
         }
     }
