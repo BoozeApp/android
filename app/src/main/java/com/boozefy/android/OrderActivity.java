@@ -45,6 +45,8 @@ public class OrderActivity extends AppCompatActivity implements SwipeRefreshLayo
     public View lLayoutStaff;
     @Bind(R.id.layout_client)
     public View lLayoutClient;
+    @Bind(R.id.text_total_price)
+    public TextView lTextTotalPrice;
     @Bind(R.id.text_change)
     public TextView lTextChange;
     @Bind(R.id.text_address)
@@ -185,6 +187,7 @@ public class OrderActivity extends AppCompatActivity implements SwipeRefreshLayo
         lLayoutStaff.setVisibility(View.VISIBLE);
 
         lTextChange.setText(String.format(Locale.ENGLISH, getString(R.string.text_price), order.getChange()));
+        lTextTotalPrice.setText(String.format(Locale.ENGLISH, getString(R.string.text_price), order.getAmount()));
         lTextAddress.setText(order.getAddress());
 
         lButtonSendMessage.setVisibility(View.GONE);
@@ -418,7 +421,7 @@ public class OrderActivity extends AppCompatActivity implements SwipeRefreshLayo
             startActivity(intent);
             finish();
         } else {
-            finish();
+            super.onBackPressed();
         }
     }
 

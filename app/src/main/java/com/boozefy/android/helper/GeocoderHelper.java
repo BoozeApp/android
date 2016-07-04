@@ -58,35 +58,39 @@ public class GeocoderHelper {
 
                 Location location = new Location();
 
-                JsonObject json = response.body().getAsJsonObject();
-                JsonObject result = json.getAsJsonArray("results").get(0).getAsJsonObject();
-                JsonArray address = result.getAsJsonArray("address_components");
+                try {
+                    JsonObject json = response.body().getAsJsonObject();
+                    JsonObject result = json.getAsJsonArray("results").get(0).getAsJsonObject();
+                    JsonArray address = result.getAsJsonArray("address_components");
 
-                for (int i=0; i<address.size(); i++) {
-                    JsonObject obj = address.get(i).getAsJsonObject();
-                    JsonArray types = obj.getAsJsonArray("types");
+                    for (int i = 0; i < address.size(); i++) {
+                        JsonObject obj = address.get(i).getAsJsonObject();
+                        JsonArray types = obj.getAsJsonArray("types");
 
-                    for (int j=0; j<types.size(); j++) {
-                        String type = types.get(j).getAsString();
+                        for (int j = 0; j < types.size(); j++) {
+                            String type = types.get(j).getAsString();
 
-                        if (type.equals("street_number")) {
-                            location.number = obj.get("long_name").getAsString();
-                            break;
-                        } else if (type.equals("route")) {
-                            location.street = obj.get("long_name").getAsString();
-                            break;
-                        } else if (type.equals("postal_code")) {
-                            location.zipCode = obj.get("long_name").getAsString();
-                            break;
+                            if (type.equals("street_number")) {
+                                location.number = obj.get("long_name").getAsString();
+                                break;
+                            } else if (type.equals("route")) {
+                                location.street = obj.get("long_name").getAsString();
+                                break;
+                            } else if (type.equals("postal_code")) {
+                                location.zipCode = obj.get("long_name").getAsString();
+                                break;
+                            }
                         }
                     }
+
+                    JsonObject geometry = result.getAsJsonObject("geometry");
+                    JsonObject loc = geometry.getAsJsonObject("location");
+
+                    location.latitude = loc.get("lat").getAsDouble();
+                    location.longitude = loc.get("lng").getAsDouble();
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-
-                JsonObject geometry = result.getAsJsonObject("geometry");
-                JsonObject loc = geometry.getAsJsonObject("location");
-
-                location.latitude = loc.get("lat").getAsDouble();
-                location.longitude = loc.get("lng").getAsDouble();
 
                 if (onLocationGathered != null) {
                     onLocationGathered.onGathered(location);
@@ -104,9 +108,10 @@ public class GeocoderHelper {
     }
 
     public static class Location {
-        public String street;
-        public String number;
-        public String zipCode;
+        public String street = null;
+        public String number = null;
+        public String zipCode = null;
+        public String description = null;
         public double latitude;
         public double longitude;
 
@@ -119,6 +124,7 @@ public class GeocoderHelper {
             location.zipCode = jsonObject.get("zipCode").getAsString();
             location.latitude = jsonObject.get("latitude").getAsDouble();
             location.longitude = jsonObject.get("longitude").getAsDouble();
+            location.description = jsonObject.get("description").getAsString();
 
             return location;
         }
@@ -130,6 +136,7 @@ public class GeocoderHelper {
             jsonObject.addProperty("zipCode", zipCode);
             jsonObject.addProperty("latitude", latitude);
             jsonObject.addProperty("longitude", longitude);
+            jsonObject.addProperty("description", description);
 
             return jsonObject.toString();
         }

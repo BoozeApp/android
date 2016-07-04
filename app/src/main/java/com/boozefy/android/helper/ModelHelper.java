@@ -10,6 +10,7 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.boozefy.android.model.Beverage;
+import com.boozefy.android.model.Message;
 import com.boozefy.android.model.Order;
 import com.boozefy.android.model.User;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
@@ -26,11 +27,12 @@ import java.sql.SQLException;
  */
 public class ModelHelper extends OrmLiteSqliteOpenHelper
 {
-    public static final int DATABASE_VERSION = 3;
+    public static final int DATABASE_VERSION = 4;
 
     private Dao<User, Integer> userDao = null;
     private Dao<Beverage, Integer> beverageDao = null;
     private Dao<Order, Integer> orderDao = null;
+    private Dao<Message, Integer> messageDao = null;
 
     public static ConnectionSource cs;
 
@@ -50,10 +52,13 @@ public class ModelHelper extends OrmLiteSqliteOpenHelper
             TableUtils.dropTable(cs, User.class, true);
             TableUtils.dropTable(cs, Beverage.class, true);
             TableUtils.dropTable(cs, Order.class, true);
+            TableUtils.dropTable(cs, Message.class, true);
 
             TableUtils.createTable(cs, User.class);
             TableUtils.createTable(cs, Beverage.class);
             TableUtils.createTable(cs, Order.class);
+            TableUtils.createTable(cs, Message.class);
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -67,6 +72,8 @@ public class ModelHelper extends OrmLiteSqliteOpenHelper
             TableUtils.createTable(cs, User.class);
             TableUtils.createTable(cs, Beverage.class);
             TableUtils.createTable(cs, Order.class);
+            TableUtils.createTable(cs, Message.class);
+
             ModelHelper.cs = cs;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -82,6 +89,7 @@ public class ModelHelper extends OrmLiteSqliteOpenHelper
             TableUtils.dropTable(cs, User.class, true);
             TableUtils.dropTable(cs, Beverage.class, true);
             TableUtils.dropTable(cs, Order.class, true);
+            TableUtils.dropTable(cs, Message.class, true);
 
             onCreate(database, cs);
         } catch (SQLException e) {
@@ -123,6 +131,18 @@ public class ModelHelper extends OrmLiteSqliteOpenHelper
         }
 
         return orderDao;
+    }
+
+    public Dao<Message, Integer> getMessageDao() {
+        if (messageDao == null) {
+            try {
+                messageDao = getDao(Message.class);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return messageDao;
     }
 
 }

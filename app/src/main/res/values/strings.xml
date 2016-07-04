@@ -1,9 +1,9 @@
 <resources>
-    <array name="spinner_city">
+    <array name="spinner_city" translatable="false">
         <item>La Paz</item>
     </array>
 
-    <string name="fb_id">961863003850867</string>
+    <string name="fb_id" translatable="false">961863003850867</string>
 
     <string name="label_booze_selection">New order</string>
     <string name="label_checkout">Checkout</string>
@@ -27,6 +27,7 @@
     <string name="text_change">Change</string>
     <string name="text_address">Address</string>
     <string name="text_status">Status:</string>
+    <string name="text_description">Description</string>
 
     <string name="text_processing">Processing…</string>
     <string name="text_out_for_delivery">Out for delivery</string>

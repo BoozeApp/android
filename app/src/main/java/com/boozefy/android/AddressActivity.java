@@ -119,10 +119,12 @@ public class AddressActivity extends AppCompatActivity {
         LocationManager mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, new LocationListener() {
             private boolean lock = false;
+
             @Override
             public void onLocationChanged(Location location) {
                 if (lock || foundLocation) return;
                 lock = true;
+                foundLocation = true;
 
                 Geocoder gcd = new Geocoder(getBaseContext(), Locale.getDefault());
                 List<Address> addresses;
@@ -177,6 +179,13 @@ public class AddressActivity extends AppCompatActivity {
                 }
             }
         }, 10000);
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                foundLocation = false;
+            }
+        }, 12000);
     }
 
     private void displayDialog(GeocoderHelper.Location location) {
@@ -184,13 +193,12 @@ public class AddressActivity extends AppCompatActivity {
 
         final EditText lEditStreet = (EditText) layout.findViewById(R.id.edit_street);
         final EditText lEditNumber = (EditText) layout.findViewById(R.id.edit_number);
-        final EditText lEditZipCode = (EditText) layout.findViewById(R.id.edit_zip_code);
+        final EditText lEditDescri = (EditText) layout.findViewById(R.id.edit_description);
         final Spinner lSpinnerCity = (Spinner) layout.findViewById(R.id.spinner_city);
 
         if (location != null) {
             lEditStreet.setText(location.street);
             lEditNumber.setText(location.number);
-            lEditZipCode.setText(location.zipCode);
         }
 
         lSpinnerCity.setEnabled(false);
@@ -208,8 +216,7 @@ public class AddressActivity extends AppCompatActivity {
 
                     String addressLine = lEditStreet.getText().toString() + ", " +
                                          lEditNumber.getText().toString() + " - " +
-                                         lSpinnerCity.getSelectedItem().toString() + ", " +
-                                         lEditZipCode.getText().toString() + ", Bolivia";
+                                         lSpinnerCity.getSelectedItem().toString() + ", Bolivia";
 
                     GeocoderHelper.gatherFromAddress(addressLine, new GeocoderHelper.OnLocationGathered() {
                         @Override
@@ -230,9 +237,8 @@ public class AddressActivity extends AppCompatActivity {
                                 location.number = lEditNumber.getText().toString();
                             }
 
-                            if (location.zipCode == null) {
-                                location.zipCode = lEditZipCode.getText().toString();
-                            }
+                            location.description = lEditDescri.getText().toString();
+                            location.zipCode = "";
 
                             verifyTelephone(location);
                         }
@@ -241,7 +247,7 @@ public class AddressActivity extends AppCompatActivity {
             })
             .setNegativeButton(R.string.button_cancel, null)
             .create();
-            
+
         try {
             dialog.show();
         } catch (Exception e) {

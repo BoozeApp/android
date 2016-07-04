@@ -84,7 +84,7 @@ public class CheckoutAdapter extends BoozeAdapter<CheckoutAdapter.BoozeAmount, C
                 .centerInside()
                 //.tag(context)
                 .into(holder.lPicture);
-        holder.lName.setText(boozeAmount.beverage.getName());
+        holder.lName.setText(boozeAmount.amount + "x " + boozeAmount.beverage.getName());
 
         holder.lPriceUnit.setText(String.format(Locale.ENGLISH, holder.getString(R.string.text_price), boozeAmount.beverage.getPrice()) + " / u");
         holder.lPriceTotal.setText(String.format(Locale.ENGLISH, holder.getString(R.string.text_price), (boozeAmount.beverage.getPrice() * boozeAmount.amount)));

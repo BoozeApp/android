@@ -3,7 +3,6 @@ package com.boozefy.android;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -175,6 +174,7 @@ public class CheckoutActivity extends AppCompatActivity {
         Call<Order> createCall = Order.getService().create(
                 user.getAccessToken(),
                 location.addressLine(),
+                location.description,
                 payAmount - total,
                 location.latitude,
                 location.longitude
@@ -276,8 +276,8 @@ public class CheckoutActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
-        super.onSaveInstanceState(outState, outPersistentState);
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
 
         outState.putSerializable("selectedBoozes", selectedBoozes);
         outState.putString("location", location.toString());

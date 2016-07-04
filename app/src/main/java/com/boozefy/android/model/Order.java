@@ -74,6 +74,7 @@ public class Order {
         @POST("orders")
         Call<Order> create(@Query("access_token") String accessToken,
                            @Field("address") String address,
+                           @Field("description") String description,
                            @Field("change") double change,
                            @Field("latitude") double latitude,
                            @Field("longitude") double longitude);

@@ -1,10 +1,4 @@
 <resources>
-    <array name="spinner_city">
-        <item>La Paz</item>
-    </array>
-
-    <string name="fb_id">961863003850867</string>
-
     <string name="label_booze_selection">Nuevo pedido</string>
     <string name="label_checkout">Checkout</string>
 
@@ -56,13 +50,16 @@
     <string name="button_yes">Si</string>
     <string name="button_no">No</string>
     <string name="button_deliver_this_order">Entregar este pedido</string>
+    <string name="button_delivered">Entregado!</string>
     <string name="button_sign_in_using_facebook">Regístrate con una cuenta de Facebook</string>
     <string name="button_see_order_status">Ver estado del pedido</string>
     <string name="button_review_orders">Revisa tu orden</string>
     <string name="button_send_message">Enviar um mensaje al cliente</string>
+    <string name="button_call_client">Llamar</string>
     <string name="button_send">Enviar</string>
     <string name="button_sign_in">Cuenta</string>
     <string name="button_sign_up">Registrar</string>
+    <string name="button_reply">Respuesta</string>
 
     <string name="dialog_title_your_address">Tu dirección</string>
     <string name="dialog_loading_location">Cargando ubicación, por favor espera…</string>
@@ -72,6 +69,9 @@
     <string name="dialog_creating_order">Creando pedido, por favor espera…</string>
     <string name="dialog_sending_message">Mandando mensaje, por favor espera…</string>
     <string name="dialog_title_your_contact">Su contacto</string>
+    <string name="dialog_title_send_message">Enviar mensaje</string>
+    <string name="dialog_title_delivered">Pedido entregado</string>
+    <string name="dialog_message_delivered">¿Quieres cambiar el estado de este pedido para \'entregado\'?\nEsta acción no se puede deshacer.</string>
 
     <string name="push_title_in_transit">Actualización del pedido</string>
     <string name="push_message_in_transit">Su pedido salió para entrega!</string>
@@ -97,6 +97,7 @@
     <string name="snackbar_email_not_found">Dirección de correo electrónico no encontrado</string>
     <string name="snackbar_password_incorrect">Contraseña incorrecta</string>
     <string name="snackbar_email_already_in_use">Correo electrónico ya en uso</string>
+    <string name="snackbar_order_delivered">El pedido ha sido entregado</string>
 
     <string name="title_activity_sign_in">BoozeApp</string>
     <string name="title_activity_thank_you">Gracias</string>

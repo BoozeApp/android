@@ -187,6 +187,7 @@ public class GcmIntentService extends IntentService {
 
                 Notification n = new NotificationCompat.Builder(GcmIntentService.this)
                         .setContentTitle(getString(R.string.push_title_message))
+                        .setContentIntent(pIntentToAnswer)
                         .setContentText(message)
                         .addAction(R.drawable.ic_reply, getString(R.string.button_reply), pIntentToAnswer)
                         .setSmallIcon(R.drawable.ic_stat_name)

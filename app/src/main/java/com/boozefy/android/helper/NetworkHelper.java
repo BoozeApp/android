@@ -19,7 +19,7 @@ import retrofit2.Retrofit;
  * Copyright (c) by Booze, 2016 - All rights reserved.
  */
 public class NetworkHelper {
-    private static final String baseURL = "http://10.0.3.2:3000/";
+    private static final String baseURL = "http://localhost:3000/";//"http://booze.mauriciogior.com/";
     private static Retrofit retrofit = null;
 
     public static Retrofit getRetrofit() {
