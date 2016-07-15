@@ -11,6 +11,7 @@
     <string name="app_name">Booze</string>
     <string name="action_sign_out">Sign out</string>
 
+    <string name="title_messages">Messages</string>
     <string name="title_checkout">Checkout</string>
     <string name="text_total">Total:</string>
 

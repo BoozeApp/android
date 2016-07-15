@@ -124,7 +124,7 @@ fieldName=receiver
 fieldName=order
 # --field-end
 # --field-start--
-fieldName=message
+fieldName=text
 # --field-end
 # --field-start--
 fieldName=createdAt

@@ -15,23 +15,20 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
-
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import com.boozefy.android.adapter.CheckoutAdapter;
 import com.boozefy.android.model.Beverage;
 import com.boozefy.android.model.Order;
 import com.boozefy.android.model.User;
 import com.boozefy.android.view.SwipeRefreshLayout;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-
-import butterknife.Bind;
-import butterknife.ButterKnife;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class OrderActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
 
@@ -55,6 +52,8 @@ public class OrderActivity extends AppCompatActivity implements SwipeRefreshLayo
     public Button lButtonDeliverThisOrder;
     @Bind(R.id.button_send_message)
     public Button lButtonSendMessage;
+    @Bind(R.id.button_send_message_client)
+    public Button lButtonSendMessageClient;
     @Bind(R.id.button_call_client)
     public Button lButtonCallClient;
     @Bind(R.id.button_delivered)
@@ -162,6 +161,7 @@ public class OrderActivity extends AppCompatActivity implements SwipeRefreshLayo
         lLayoutClient.setVisibility(View.VISIBLE);
         lLayoutStaff.setVisibility(View.GONE);
 
+        lButtonSendMessageClient.setVisibility(View.GONE);
         lTextTotal.setText(String.format(Locale.ENGLISH, getString(R.string.text_price), order.getAmount()));
 
         switch (order.getStatus()) {
@@ -171,6 +171,16 @@ public class OrderActivity extends AppCompatActivity implements SwipeRefreshLayo
 
             case in_transit:
                 lTextStatus.setText(R.string.text_in_transit);
+
+                lButtonSendMessageClient.setVisibility(View.VISIBLE);
+                lButtonSendMessageClient.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent intent = new Intent(getApplicationContext(), MessageActivity.class);
+                        intent.putExtra("orderId", orderId);
+                        startActivity(intent);
+                    }
+                });
                 break;
 
             case fulfilled:
@@ -238,58 +248,9 @@ public class OrderActivity extends AppCompatActivity implements SwipeRefreshLayo
         lButtonSendMessage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                View layout = getLayoutInflater().inflate(R.layout.dialog_send_message, null, false);
-
-                final EditText message = (EditText) layout.findViewById(R.id.edit_message);
-
-                new AlertDialog.Builder(OrderActivity.this)
-                    .setTitle(R.string.button_send_message)
-                    .setView(layout)
-                    .setPositiveButton(R.string.button_send, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            final ProgressDialog dialog = new ProgressDialog(OrderActivity.this);
-                            dialog.setMessage(getString(R.string.dialog_sending_message));
-                            dialog.setIndeterminate(true);
-                            dialog.setCanceledOnTouchOutside(false);
-                            dialog.show();
-
-                            Order.getService().message(
-                                order.getId(),
-                                user.getAccessToken(),
-                                message.getText().toString()
-                            ).enqueue(new Callback<Order>() {
-                                @Override
-                                public void onResponse(Response<Order> response) {
-                                    dialog.dismiss();
-
-                                    if (response.body() != null) {
-                                        Snackbar.make(lToolbar,
-                                                R.string.snackbar_message_sent,
-                                                Snackbar.LENGTH_LONG).show();
-                                    } else {
-                                        Snackbar.make(lToolbar,
-                                                R.string.snackbar_check_your_internet_connection,
-                                                Snackbar.LENGTH_LONG).show();
-                                    }
-                                }
-
-                                @Override
-                                public void onFailure(Throwable t) {
-                                    dialog.dismiss();
-
-                                    Snackbar.make(lToolbar,
-                                            R.string.snackbar_check_your_internet_connection,
-                                            Snackbar.LENGTH_LONG).show();
-                                }
-                            });
-
-                        }
-                    })
-                    .setNegativeButton(R.string.button_cancel, null)
-                    .create()
-                    .show();
-
+                Intent intent = new Intent(getApplicationContext(), MessageActivity.class);
+                intent.putExtra("orderId", orderId);
+                startActivity(intent);
             }
         });
 

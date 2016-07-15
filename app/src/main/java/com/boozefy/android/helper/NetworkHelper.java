@@ -4,14 +4,13 @@ import com.google.gson.ExclusionStrategy;
 import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import retrofit2.GsonConverterFactory;
+import retrofit2.Retrofit;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-
-import retrofit2.GsonConverterFactory;
-import retrofit2.Retrofit;
 
 /**
  * Created by Mauricio Giordano on 1/11/16.
@@ -19,7 +18,7 @@ import retrofit2.Retrofit;
  * Copyright (c) by Booze, 2016 - All rights reserved.
  */
 public class NetworkHelper {
-    private static final String baseURL = "http://localhost:3000/";//"http://booze.mauriciogior.com/";
+    private static final String baseURL = "http://booze.mauriciogior.com/";
     private static Retrofit retrofit = null;
 
     public static Retrofit getRetrofit() {

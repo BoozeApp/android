@@ -7,27 +7,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import com.boozefy.android.R;
 import com.boozefy.android.model.Message;
 import com.boozefy.android.model.User;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.List;
-import java.util.TimeZone;
-
-import butterknife.Bind;
-import butterknife.ButterKnife;
+import java.util.*;
 
 /**
  * Created by mauricio on 5/30/16.
  */
 public class MessageAdapter extends BoozeAdapter<Message, MessageAdapter.ViewHolder> {
 
-    private List<Message> dataList;
     private User user;
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -131,7 +124,7 @@ public class MessageAdapter extends BoozeAdapter<Message, MessageAdapter.ViewHol
             viewHolder.friendLayout.setVisibility(View.GONE);
             viewHolder.meLayout.setVisibility(View.VISIBLE);
 
-            viewHolder.meText.setText(chat.getMessage());
+            viewHolder.meText.setText(chat.getText());
             viewHolder.meDate.setText(date);
 
             if (date.equals("")) {
@@ -143,7 +136,7 @@ public class MessageAdapter extends BoozeAdapter<Message, MessageAdapter.ViewHol
             viewHolder.friendLayout.setVisibility(View.VISIBLE);
             viewHolder.meLayout.setVisibility(View.GONE);
 
-            viewHolder.friendText.setText(chat.getMessage());
+            viewHolder.friendText.setText(chat.getText());
             viewHolder.friendDate.setText(date);
 
             if (date.equals("")) {

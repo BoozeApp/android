@@ -20,6 +20,11 @@ public abstract class BoozeAdapter<D, VH extends RecyclerView.ViewHolder> extend
         notifyDataSetChanged();
     }
 
+    public void addToDataList(@NonNull D data) {
+        this.dataList.add(data);
+        notifyItemInserted(dataList.size() - 1);
+    }
+
     @Override
     public int getItemCount() {
         return dataList.size();

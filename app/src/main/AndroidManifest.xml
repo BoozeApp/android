@@ -50,6 +50,10 @@
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
+            android:name=".MessageActivity"
+            android:label="@string/title_messages"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
             android:name=".BoozeSelectionActivity"
             android:label="@string/label_booze_selection"
             android:theme="@style/AppTheme.NoActionBar" />

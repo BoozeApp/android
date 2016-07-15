@@ -8,37 +8,37 @@ import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
-
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import com.boozefy.android.helper.GeocoderHelper;
 import com.boozefy.android.model.User;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
-import butterknife.Bind;
-import butterknife.ButterKnife;
-import retrofit2.Callback;
-import retrofit2.Response;
-
-public class AddressActivity extends AppCompatActivity {
+public class AddressActivity extends AppCompatActivity implements
+        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     @Bind(R.id.toolbar)
     public Toolbar lToolbar;
@@ -55,7 +55,23 @@ public class AddressActivity extends AppCompatActivity {
 
     public static final int REQUEST_PERMISSION_FINE_LOCATION = 10;
     private boolean foundLocation = false;
+    private boolean lock = false;
     private User user;
+
+    private ProgressDialog progressDialog;
+    private GoogleApiClient mGoogleApiClient;
+    private Location mLastLocation = null;
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+    }
+
+    @Override
+    protected void onStop() {
+        mGoogleApiClient.disconnect();
+        super.onStop();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +82,12 @@ public class AddressActivity extends AppCompatActivity {
         setSupportActionBar(lToolbar);
 
         user = User._.load(this);
+
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+            .addConnectionCallbacks(this)
+            .addOnConnectionFailedListener(this)
+            .addApi(LocationServices.API)
+            .build();
 
         if (user.getLevel() == User.LEVEL.client) {
             lLayoutClient.setVisibility(View.VISIBLE);
@@ -111,60 +133,18 @@ public class AddressActivity extends AppCompatActivity {
 
     }
 
+    @SuppressWarnings("MissingPermission")
     private void gatherUserLocation() {
-        final ProgressDialog progressDialog = new ProgressDialog(this);
+        if (!lock) lock = true;
+        else return;
+
+        foundLocation = false;
+
+        progressDialog = new ProgressDialog(this);
         progressDialog.setMessage(getString(R.string.dialog_loading_location));
         progressDialog.show();
 
-        LocationManager mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-        mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, new LocationListener() {
-            private boolean lock = false;
-
-            @Override
-            public void onLocationChanged(Location location) {
-                if (lock || foundLocation) return;
-                lock = true;
-                foundLocation = true;
-
-                Geocoder gcd = new Geocoder(getBaseContext(), Locale.getDefault());
-                List<Address> addresses;
-
-                try {
-                    addresses = gcd.getFromLocation(location.getLatitude(),
-                            location.getLongitude(), 1);
-
-                    String address = addresses.get(0).getAddressLine(0);
-
-                    GeocoderHelper.gatherFromAddress(address, new GeocoderHelper.OnLocationGathered() {
-                        @Override
-                        public void onGathered(GeocoderHelper.Location location) {
-                            progressDialog.dismiss();
-                            displayDialog(location);
-                        }
-                    });
-
-                } catch (IOException e) {
-                    progressDialog.dismiss();
-                    e.printStackTrace();
-                }
-
-            }
-
-            @Override
-            public void onStatusChanged(String s, int i, Bundle bundle) {
-                Log.d("LOCATION", "STATUSCHANGED " + s);
-            }
-
-            @Override
-            public void onProviderEnabled(String s) {
-                Log.d("LOCATION", "PROVIDERENABLED " + s);
-            }
-
-            @Override
-            public void onProviderDisabled(String s) {
-                Log.d("LOCATION", "PROVIDERDISABLED " + s);
-            }
-        });
+        mGoogleApiClient.connect();
 
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -172,6 +152,8 @@ public class AddressActivity extends AppCompatActivity {
                 if (!foundLocation) {
                     progressDialog.dismiss();
                     foundLocation = true;
+                    lock = false;
+                    mGoogleApiClient.disconnect();
 
                     Snackbar.make(lToolbar, R.string.snackbar_could_not_detect_gps,
                                                                 Snackbar.LENGTH_LONG).show();
@@ -179,13 +161,6 @@ public class AddressActivity extends AppCompatActivity {
                 }
             }
         }, 10000);
-
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                foundLocation = false;
-            }
-        }, 12000);
     }
 
     private void displayDialog(GeocoderHelper.Location location) {
@@ -359,4 +334,42 @@ public class AddressActivity extends AppCompatActivity {
             }
         }
     }
+
+    @SuppressWarnings("MissingPermission")
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+        foundLocation = true;
+        lock = false;
+        mGoogleApiClient.disconnect();
+
+        Geocoder gcd = new Geocoder(getBaseContext(), Locale.getDefault());
+        List<Address> addresses;
+
+        try {
+            addresses = gcd.getFromLocation(mLastLocation.getLatitude(),
+                    mLastLocation.getLongitude(), 1);
+
+            String address = addresses.get(0).getAddressLine(0);
+
+            GeocoderHelper.gatherFromAddress(address, new GeocoderHelper.OnLocationGathered() {
+                @Override
+                public void onGathered(GeocoderHelper.Location location) {
+                    progressDialog.dismiss();
+                    displayDialog(location);
+                }
+            });
+
+        } catch (IOException e) {
+            progressDialog.dismiss();
+            e.printStackTrace();
+        }
+
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) { }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) { }
 }

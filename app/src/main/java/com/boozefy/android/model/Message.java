@@ -1,21 +1,19 @@
 package com.boozefy.android.model;
 
 import android.content.Context;
-
 import com.boozefy.android.helper.ModelHelper;
 import com.boozefy.android.helper.NetworkHelper;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DatabaseField;
+import retrofit2.Call;
+import retrofit2.http.GET;
+import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
-import retrofit2.Call;
-import retrofit2.http.GET;
-import retrofit2.http.Path;
-import retrofit2.http.Query;
 
 /**
  * Created by mauricio on 5/30/16.
@@ -31,7 +29,7 @@ public class Message {
     @DatabaseField(foreign = true, foreignAutoCreate = true, foreignAutoRefresh = true)
     private Order order;
     @DatabaseField
-    private String message;
+    private String text;
     @DatabaseField
     private String createdAt;
 
@@ -39,7 +37,7 @@ public class Message {
     private static Service service;
 
     public interface Service {
-        @GET("messages/{orderId}")
+        @GET("orders/{orderId}/message")
         Call<List<Message>> find(@Path("orderId") long orderId,
                                  @Query("access_token") String accessToken);
     }
@@ -78,12 +76,12 @@ public class Message {
         this.order = order;
     }
 
-    public String getMessage() {
-        return message;
+    public String getText() {
+        return text;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
+    public void setText(String text) {
+        this.text = text;
     }
 
     public String getCreatedAt() {
